@@ -10,8 +10,8 @@
 
 
 // Wi-Fi Credentials
-const char* ssid = "boilermake5";
-const char* password = "boilermake2025";
+const char* ssid = "test1234";
+const char* password = "password123";
 
 // API Endpoint (Placeholder)
 const char* API_ENDPOINT = "http://your-api-endpoint.com/data";
