@@ -3,6 +3,7 @@ package com.asterlink.rest.service.impl;
 import com.asterlink.rest.model.SensorRecord;
 import com.asterlink.rest.repository.SensorRecordRepository;
 import com.asterlink.rest.service.SensorRecordService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -10,6 +11,8 @@ import java.util.List;
  * Implementation for SensorRecord services
  * @author gl3bert
  */
+
+@Service
 public class SensorRecordServiceImpl implements SensorRecordService {
 
     SensorRecordRepository sensorRecordRepository;

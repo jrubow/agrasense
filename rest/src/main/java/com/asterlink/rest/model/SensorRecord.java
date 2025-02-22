@@ -21,6 +21,9 @@ public class SensorRecord {
     private int light;
     private int soil;
 
+    public SensorRecord() {
+    }
+
     public SensorRecord(int record_id, int device_id, String timestamp, double temp, int humidity, int light, int soil) {
         this.record_id = record_id;
         this.device_id = device_id;
@@ -35,9 +38,6 @@ public class SensorRecord {
         this.record_id = record_id;
         this.device_id = device_id;
         this.temp = temp;
-    }
-
-    public SensorRecord() {
     }
 
     public int getRecord_id() {
