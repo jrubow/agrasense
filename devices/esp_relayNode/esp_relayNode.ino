@@ -12,7 +12,7 @@ Scheduler userScheduler; // Task scheduler for painlessMesh
 // Sensor Pins
 #define DHTPIN 4  // GPIO for DHT11
 #define DHTTYPE DHT11
-#define LIGHT_SENSOR_PIN 34  // GPIO pin for Light Sensor (LDR)
+#define LIGHT_SENSOR_PIN 0  // GPIO pin for Light Sensor (LDR)
 #define SOIL_MOISTURE_PIN 35 // GPIO pin for Soil Moisture Sensor
 
 // Initialize DHT Sensor

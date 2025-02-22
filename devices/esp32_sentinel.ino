@@ -1,66 +1,139 @@
-/*
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp-mesh-esp32-esp8266-painlessmesh/
-  
-  This is a simple example that uses the painlessMesh library: https://github.com/gmag11/painlessMesh/blob/master/examples/basic/basic.ino
-*/
-
 #include "painlessMesh.h"
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 
-#define   MESH_PREFIX     "asterlink"
-#define   MESH_PASSWORD   "AsterLinkMesh2025$#"
-#define   MESH_PORT       5555
-#define   CONFIGURATION   0
+#define MESH_PREFIX "asterlink"
+#define MESH_PASSWORD "AsterLinkMesh2025$#"
+#define MESH_PORT 5555
+#define CONFIGURATION 1
 
-Scheduler userScheduler; // to control your personal task
-painlessMesh  mesh;
 
-// User stub
-void sendMessage() ; // Prototype so PlatformIO doesn't complain
+// Wi-Fi Credentials
+const char* ssid = "boilermake5";
+const char* password = "boilermake2025";
 
-Task taskSendMessage( TASK_SECOND * 1 , TASK_FOREVER, &sendMessage );
+// API Endpoint (Placeholder)
+const char* API_ENDPOINT = "http://your-api-endpoint.com/data";
 
-void sendMessage() {
-  String msg = "Hi from node2";
-  msg += mesh.getNodeId();
-  mesh.sendBroadcast( msg );
-  taskSendMessage.setInterval( random( TASK_SECOND * 1, TASK_SECOND * 5 ));
+Scheduler userScheduler;
+painlessMesh mesh;
+
+// Function prototypes
+void connectToWiFi();
+void processReceivedData(const String& msg);
+void sendDataToAPI(const String& jsonPayload);  // Placeholder
+
+// Callback function when data is received
+void receivedCallback(uint32_t from, String &msg) {
+    Serial.printf("Received from %u: %s\n", from, msg.c_str());
+    processReceivedData(msg);
 }
 
-// Needed for painless library
-void receivedCallback( uint32_t from, String &msg ) {
-  Serial.printf("startHere: Received from %u msg=%s\n", from, msg.c_str());
-}
-
+// Callback when a new node connects
 void newConnectionCallback(uint32_t nodeId) {
-    Serial.printf("--> startHere: New Connection, nodeId = %u\n", nodeId);
+    Serial.printf("New Connection, nodeId = %u\n", nodeId);
 }
 
+// Callback when mesh network changes
 void changedConnectionCallback() {
-  Serial.printf("Changed connections\n");
+    Serial.println("Changed connections");
 }
 
+// Callback for time sync
 void nodeTimeAdjustedCallback(int32_t offset) {
-    Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(),offset);
+    Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(), offset);
+}
+
+// Function to connect to Wi-Fi
+void connectToWiFi() {
+    Serial.print("Connecting to Wi-Fi");
+    WiFi.begin(ssid, password);
+
+    int retryCount = 0;
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.print(".");
+        retryCount++;
+
+        if (retryCount > 20) {  // Timeout after 20 seconds
+            Serial.println("\nFailed to connect to Wi-Fi. Rebooting...");
+            ESP.restart();
+        }
+    }
+
+    Serial.println("\nWi-Fi Connected!");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
+}
+
+// Function to process received sensor data
+void processReceivedData(const String& msg) {
+    StaticJsonDocument<200> jsonDoc;
+    DeserializationError error = deserializeJson(jsonDoc, msg);
+
+    if (error) {
+        Serial.print("JSON Parsing Failed: ");
+        Serial.println(error.f_str());
+        return;
+    }
+
+    // Extract values from JSON
+    uint32_t device_id = jsonDoc["device_id"];
+    uint32_t timestamp = jsonDoc["timestamp"];
+    float temperature = jsonDoc["temperature"];
+    float humidity = jsonDoc["humidity"];
+    int light_level = jsonDoc["light_level"];
+    int soil_moisture = jsonDoc["soil_moisture"];
+
+    // Print data to Serial Monitor
+    Serial.println("\n--- Sensor Data Received ---");
+    Serial.printf("Device ID: %u\n", device_id);
+    Serial.printf("Timestamp: %u\n", timestamp);
+    Serial.printf("Temperature: %.2f°C\n", temperature);
+    Serial.printf("Humidity: %.2f%%\n", humidity);
+    Serial.printf("Light Level: %d%%\n", light_level);
+    Serial.printf("Soil Moisture: %d%%\n", soil_moisture);
+    Serial.println("----------------------------");
+
+    // TODO: Future Implementation - Send data to API
+    // sendDataToAPI(msg);
+}
+
+// Placeholder function for API integration
+void sendDataToAPI(const String& jsonPayload) {
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("Wi-Fi not connected. Cannot send data.");
+        return;
+    }
+
+    HTTPClient http;
+    http.begin(API_ENDPOINT);
+    http.addHeader("Content-Type", "application/json");
+
+    int httpResponseCode = http.POST(jsonPayload);
+    Serial.printf("API Response: %d\n", httpResponseCode);
+
+    http.end();
 }
 
 void setup() {
-  Serial.begin(115200);
+    Serial.begin(115200);
+    
+    // Connect to Wi-Fi
+    connectToWiFi();
 
-  mesh.setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE ); // all types on
-  // mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
+    // Initialize mesh network
+    mesh.setDebugMsgTypes(ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE);
+    mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
 
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
-  mesh.onReceive(&receivedCallback);
-  mesh.onNewConnection(&newConnectionCallback);
-  mesh.onChangedConnections(&changedConnectionCallback);
-  mesh.onNodeTimeAdjusted(&nodeTimeAdjustedCallback);
-
-  userScheduler.addTask( taskSendMessage );
-  taskSendMessage.enable();
+    // Set callbacks
+    mesh.onReceive(&receivedCallback);
+    mesh.onNewConnection(&newConnectionCallback);
+    mesh.onChangedConnections(&changedConnectionCallback);
+    mesh.onNodeTimeAdjusted(&nodeTimeAdjustedCallback);
 }
 
 void loop() {
-  // it will run the user scheduler as well
-  mesh.update();
+    mesh.update();
 }
