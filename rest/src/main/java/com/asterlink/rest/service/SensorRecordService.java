@@ -1,6 +1,7 @@
 package com.asterlink.rest.service;
 
 import com.asterlink.rest.model.SensorRecord;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  * @author gl3bert
  */
 
+@Service
 public interface SensorRecordService {
     public String createSensorRecord(SensorRecord sensorRecord);
     public String updateSensorRecord(SensorRecord sensorRecord);

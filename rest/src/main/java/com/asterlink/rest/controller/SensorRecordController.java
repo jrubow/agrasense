@@ -42,7 +42,7 @@ public class SensorRecordController {
         return "Record updated.";
     }
 
-    @DeleteMapping("{record_id")
+    @DeleteMapping("{record_id}")
     public String deleteSensorRecordDetails(@PathVariable int record_id) {
         sensorRecordService.deleteSensorRecord(record_id);
         return "Record deleted.";
