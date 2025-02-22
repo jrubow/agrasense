@@ -24,7 +24,7 @@ void sendMessage() {
   String msg = "Hi from node1";
   msg += mesh.getNodeId();
   mesh.sendBroadcast( msg );
-  taskSendMessage.setInterval( random( TASK_SECOND * 1, TASK_SECOND * 5 ));
+  taskSendMessage.setInterval( random( TASK_SECOND * 10, TASK_SECOND * 5 ));
 }
 
 // Needed for painless library
