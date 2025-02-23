@@ -56,7 +56,7 @@ public class SensorRecordController {
     }
 
     @GetMapping("/averages")
-    public SensorAveragesResponse getSensorAveragesRecord() {
+    public List<SensorAveragesResponse> getSensorAveragesRecord() {
         return sensorRecordService.getSensorAveragesRecord();
     }
 }

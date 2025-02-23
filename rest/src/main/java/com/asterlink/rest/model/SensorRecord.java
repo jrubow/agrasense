@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
  */
 
 @Entity
-@Table(name="records")
+@Table(name = "records")
 public class SensorRecord {
     @Id
     private int record_id;
@@ -21,8 +21,7 @@ public class SensorRecord {
     private int light;
     private int soil;
 
-    public SensorRecord() {
-    }
+    public SensorRecord() {}
 
     public SensorRecord(int record_id, int device_id, String timestamp, double temp, int humidity, int light, int soil) {
         this.record_id = record_id;
@@ -32,12 +31,6 @@ public class SensorRecord {
         this.humidity = humidity;
         this.light = light;
         this.soil = soil;
-    }
-
-    public SensorRecord(int record_id, int device_id, double temp) {
-        this.record_id = record_id;
-        this.device_id = device_id;
-        this.temp = temp;
     }
 
     public int getRecord_id() {
