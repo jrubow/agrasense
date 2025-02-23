@@ -1,5 +1,6 @@
 package com.asterlink.rest.controller;
 
+import com.asterlink.rest.model.SensorAveragesResponse;
 import com.asterlink.rest.model.SensorRecord;
 import com.asterlink.rest.service.SensorRecordService;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class SensorRecordController {
         return sensorRecordService.getSensorRecord(record_id);
     }
 
-    @GetMapping
+    @GetMapping("/all-records")
     public List<SensorRecord> getAllSensorRecords() {
         return sensorRecordService.getAllSensorRecords();
     }
@@ -34,6 +35,12 @@ public class SensorRecordController {
     public String createSensorRecordDetails(@RequestBody SensorRecord sensorRecord) {
         sensorRecordService.createSensorRecord(sensorRecord);
         return "Record created.";
+    }
+
+    @PostMapping("/batch")
+    public String createMultipleSensorRecords(@RequestBody List<SensorRecord> sensorRecords) {
+        sensorRecordService.createMultipleSensorRecords(sensorRecords);
+        return "Records created.";
     }
 
     @PutMapping
@@ -46,5 +53,10 @@ public class SensorRecordController {
     public String deleteSensorRecordDetails(@PathVariable int record_id) {
         sensorRecordService.deleteSensorRecord(record_id);
         return "Record deleted.";
+    }
+
+    @GetMapping("/averages")
+    public SensorAveragesResponse getSensorAveragesRecord() {
+        return sensorRecordService.getSensorAveragesRecord();
     }
 }

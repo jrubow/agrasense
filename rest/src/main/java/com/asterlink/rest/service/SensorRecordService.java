@@ -1,5 +1,6 @@
 package com.asterlink.rest.service;
 
+import com.asterlink.rest.model.SensorAveragesResponse;
 import com.asterlink.rest.model.SensorRecord;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface SensorRecordService {
     public String deleteSensorRecord(int recordId);
     public SensorRecord getSensorRecord(int recordId);
     public List<SensorRecord> getAllSensorRecords();
+    public String createMultipleSensorRecords(List<SensorRecord> sensorRecords);
+    public SensorAveragesResponse getSensorAveragesRecord();
 }

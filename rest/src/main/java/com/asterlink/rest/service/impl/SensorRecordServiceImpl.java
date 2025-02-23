@@ -1,5 +1,6 @@
 package com.asterlink.rest.service.impl;
 
+import com.asterlink.rest.model.SensorAveragesResponse;
 import com.asterlink.rest.model.SensorRecord;
 import com.asterlink.rest.repository.SensorRecordRepository;
 import com.asterlink.rest.service.SensorRecordService;
@@ -46,5 +47,37 @@ public class SensorRecordServiceImpl implements SensorRecordService {
     @Override
     public List<SensorRecord> getAllSensorRecords() {
         return sensorRecordRepository.findAll();
+    }
+
+    @Override
+    public String createMultipleSensorRecords(List<SensorRecord> sensorRecords)  {
+        for (SensorRecord record : sensorRecords) {
+            createSensorRecord(record);
+        }
+        return "Records created.";
+    }
+
+    @Override
+    public SensorAveragesResponse getSensorAveragesRecord() {
+
+        List<SensorRecord> records = getAllSensorRecords();
+        if (records.isEmpty()) return null;
+
+        int endIdx = records.size() - 1;
+        int startIdx = Math.max(0, endIdx - 9);
+        List<SensorRecord> lastRecords = records.subList(startIdx, endIdx + 1);
+
+        double avgTemp = lastRecords.stream().mapToDouble(SensorRecord::getTemp).average().orElse(0);
+        double avgHumidity = lastRecords.stream().mapToInt(SensorRecord::getHumidity).average().orElse(0);
+        double avgLight = lastRecords.stream().mapToInt(SensorRecord::getLight).average().orElse(0);
+        double avgSoil = lastRecords.stream().mapToInt(SensorRecord::getSoil).average().orElse(0);
+
+        return new SensorAveragesResponse(
+                records.get(endIdx).getTimestamp(),
+                avgTemp,
+                avgHumidity,
+                avgLight,
+                avgSoil
+        );
     }
 }
