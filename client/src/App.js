@@ -1,18 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DeployPage from "./pages/DeployPage";
 import HomePage from "./pages/HomePage";
+import NavBar from "./components/NavBar";
+
+
 
 function App() {
   return (
-    <BrowserRouter>
-      <NavBar/>
-      <div className="navbar-margin">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/" element={<DeployPage />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <div className="navbar-margin">
+      <BrowserRouter >
+        <NavBar/>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/deploy" element={<DeployPage />} />
+          </Routes>
+      </BrowserRouter>
+    </div>
   )
 }
 
