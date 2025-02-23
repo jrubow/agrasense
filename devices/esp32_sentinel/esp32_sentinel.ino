@@ -92,17 +92,16 @@ void sendDataToAPI() {
         Serial.println("\nFailed to connect to WiFi");
         return;
     }
-    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+    
     Serial.println("\nConnected to WiFi, sending data...");
 
     StaticJsonDocument<2048> batchJson; // Adjust size if needed
     JsonArray jsonArray = batchJson.to<JsonArray>();
-    
-
+    String timestamp = getFormattedTime();
     for (const auto& entry : dataBuffer) {
         StaticJsonDocument<256> tempDoc;
         deserializeJson(tempDoc, entry);
-        tempDoc["timestamp"] = getFormattedTime();
+        tempDoc["timestamp"] = timestamp;
         jsonArray.add(tempDoc);
     }
 
@@ -144,6 +143,8 @@ String getFormattedTime() {
 void setup() {
     Serial.begin(115200);
     WiFi.mode(WIFI_OFF);
+
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
     mesh.setDebugMsgTypes(ERROR | MESH_STATUS | CONNECTION |  COMMUNICATION);
     mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);

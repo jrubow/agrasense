@@ -12,22 +12,25 @@ function NavBar() {
                     className={`slider ${selected === "deploy" ? "slide-right" : "slide-left"}`}
                 ></div>
                 
-                <div
-                    className={`nav-item ${selected === "home" ? "active" : ""}`}
-                    onClick={() => setSelected("home")}
-                >
-                    <Link to="/">
-                    <MdHome className="react-icon" />
-                    </Link>
-                </div>
-                <div
-                    className={`nav-item ${selected === "deploy" ? "active" : ""}`}
-                    onClick={() => setSelected("deploy")}
-                >
-                    <Link to="/deploy">
-                    <MdRocketLaunch className="react-icon" />
-                    </Link>
-                </div>
+                <Link to="/">
+                    <div
+                        className={`nav-item ${selected === "home" ? "active" : ""}`}
+                        onClick={() => setSelected("home")}
+                    >
+                        
+                        <MdHome className="react-icon" />
+                        
+                    </div>
+                </Link>
+                <Link to="/deploy">
+                    <div
+                        className={`nav-item ${selected === "deploy" ? "active" : ""}`}
+                        onClick={() => setSelected("deploy")}
+                    >
+                        
+                        <MdRocketLaunch className="react-icon" />
+                    </div>
+                </Link>
             </div>
         </div>
     );
