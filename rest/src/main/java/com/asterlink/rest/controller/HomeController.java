@@ -4,11 +4,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TestController {
+public class HomeController {
 
-    @GetMapping("/") public String health()
+    @GetMapping("/")
+    public String home()
     {
-        return "AsterLink: TestController";
+        return "AsterLink: Home";
     }
 }
 
