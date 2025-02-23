@@ -1,0 +1,7 @@
+com\asterlink\rest\service\impl\SensorRecordServiceImpl.class
+com\asterlink\rest\RestApplication.class
+com\asterlink\rest\model\SensorRecord.class
+com\asterlink\rest\controller\SensorRecordController.class
+com\asterlink\rest\service\SensorRecordService.class
+com\asterlink\rest\repository\SensorRecordRepository.class
+com\asterlink\rest\controller\TestController.class
