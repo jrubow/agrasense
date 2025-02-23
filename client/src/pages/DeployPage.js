@@ -57,23 +57,7 @@ function DeployPage() {
 
   return (
     <div className="deployPage">
-      <h1>Optimize your deployment!</h1>
-      <div className="userInput">
-        <input
-          type="text"
-          placeholder="Enter Image URL"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-        />
-        <button onClick={handleSubmit}>Submit</button>
-      </div>
-
-      {/* Display countdown */}
-      {timerStarted && countdown > 0 && (
-        <div className="countdown">
-          <h2>Time remaining: {countdown}s</h2>
-        </div>
-      )}
+      <h1><a href="https://colab.research.google.com/drive/1padeMU0qikjjpB1PbXEICvulfO5XlyuY?usp=sharing">Deployment!</a></h1>
     </div>
   );
 }
