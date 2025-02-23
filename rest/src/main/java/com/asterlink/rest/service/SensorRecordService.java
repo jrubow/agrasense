@@ -10,7 +10,6 @@ import java.util.List;
  * @author gl3bert
  */
 
-
 public interface SensorRecordService {
     public String createSensorRecord(SensorRecord sensorRecord);
     public String updateSensorRecord(SensorRecord sensorRecord);
@@ -18,5 +17,5 @@ public interface SensorRecordService {
     public SensorRecord getSensorRecord(int recordId);
     public List<SensorRecord> getAllSensorRecords();
     public String createMultipleSensorRecords(List<SensorRecord> sensorRecords);
-    public SensorAveragesResponse getSensorAveragesRecord();
+    public List<SensorAveragesResponse> getSensorAveragesRecord();
 }
