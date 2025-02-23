@@ -26,16 +26,17 @@ painlessMesh mesh;
 void sendSensorData();
 void updateLEDStatus();
 
-// Task to send sensor data every 10 seconds
-Task taskSendMessage(TASK_SECOND * 5, TASK_FOREVER, &sendSensorData);
+// Task to send sensor data every 1 seconds
+Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendSensorData);
 
 // Task to check connection status every 1 seconds
 Task taskCheckConnection(TASK_SECOND * 1, TASK_FOREVER, &updateLEDStatus);
 
 
 void sendSensorData() {
-  int nodeCount = mesh.getNodeList().size();
-  Serial.println("Node Count: " + nodeCount);
+  Serial.print("Node Count: ");
+  Serial.println(mesh.getNodeList().size());
+
 
   // Create JSON object
   StaticJsonDocument<200> jsonDoc;
@@ -46,7 +47,6 @@ void sendSensorData() {
   int raw_light = analogRead(LIGHT_SENSOR_PIN);
   int raw_soil = analogRead(SOIL_MOISTURE_PIN);
   uint32_t device_id = mesh.getNodeId();
-  //uint32_t timestamp = mesh.getNodeTime() / 1000; // Convert to seconds
 
   // Ensure we have valid sensor readings
   if (isnan(temperature) || isnan(humidity)) {
@@ -54,19 +54,12 @@ void sendSensorData() {
     return;  // Don't send invalid data
   }
 
-  // Ensure valid timestamp
-  /*if (timestamp == 0) {
-        Serial.println("Warning: Timestamp not available yet.");
-        timestamp = millis() / 1000; // Use device uptime as fallback
-    }*/
-
   // Normalize light level & soil moisture (convert 0-4095 to 0-100%)
   int light_level = map(raw_light, 0, 4095, 0, 100);
   int soil_moisture = map(raw_soil, 0, 4095, 0, 100);
 
   // Populate JSON object
   jsonDoc["device_id"] = device_id;
-  //jsonDoc["timestamp"] = timestamp;
   jsonDoc["temperature"] = temperature;
   jsonDoc["humidity"] = humidity;
   jsonDoc["light_level"] = light_level;
@@ -87,11 +80,13 @@ void sendSensorData() {
 void updateLEDStatus() {
   int nodeCount = mesh.getNodeList().size();
   if (nodeCount > 0) {
-    digitalWrite(GREEN_LED_PIN, LOW);  // Try LOW instead of HIGH
-    digitalWrite(RED_LED_PIN, HIGH);   // Try HIGH instead of LOW
-  } else {
+    // if it is connected
     digitalWrite(GREEN_LED_PIN, HIGH);
-    digitalWrite(RED_LED_PIN, LOW);
+    digitalWrite(RED_LED_PIN, LOW); 
+  } else {
+    // if not connected
+    digitalWrite(GREEN_LED_PIN, LOW);
+    digitalWrite(RED_LED_PIN, HIGH);
   }
 }
 
@@ -130,7 +125,7 @@ void setup() {
 
   // Initialize mesh network
   mesh.setDebugMsgTypes(ERROR | MESH_STATUS | CONNECTION | GENERAL);
-  //mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
+  mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
 
   // Set callbacks
   mesh.onReceive(&receivedCallback);
