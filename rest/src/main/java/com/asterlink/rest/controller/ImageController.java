@@ -52,30 +52,31 @@ public class ImageController {
     private String callPythonScript(String imageUrl) {
         List<String> command = new ArrayList<>();
         command.add("python"); // Change to "python3" if necessary
-        command.add("rest/src/main/resources/py/script.py"); // Path to script
-        command.add(imageUrl); // Pass the image URL as an argument
-
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        processBuilder.redirectErrorStream(true); // Merge error stream with output
-
-        try {
-            Process process = processBuilder.start();
-
-            // Read the Python script's output
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder output = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-
-            process.waitFor(); // Wait for the process to complete
-
-            return output.toString().trim();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return "Error processing the image.";
-        }
+        return System.getProperty("user.dir");
+//        command.add("rest/src/main/resources/py/script.py"); // Path to script
+//        command.add(imageUrl); // Pass the image URL as an argument
+//
+//        ProcessBuilder processBuilder = new ProcessBuilder(command);
+//        processBuilder.redirectErrorStream(true); // Merge error stream with output
+//
+//        try {
+//            Process process = processBuilder.start();
+//
+//            // Read the Python script's output
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//            StringBuilder output = new StringBuilder();
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                output.append(line).append("\n");
+//            }
+//
+//            process.waitFor(); // Wait for the process to complete
+//
+//            return output.toString().trim();
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//            return "Error processing the image.";
+//        }
     }
 
     public static class ImageRequest {
