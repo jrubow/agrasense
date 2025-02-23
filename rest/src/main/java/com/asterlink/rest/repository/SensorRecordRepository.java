@@ -19,22 +19,23 @@ public interface SensorRecordRepository extends JpaRepository<SensorRecord, Inte
 
     @Query(value = """
         SELECT
-                                                DATE_FORMAT(
-                                                    DATE_ADD(
-                                                        STR_TO_DATE(SUBSTRING(timestamp, 1, 19), '%Y-%m-%dT%H:%i:%s'),
-                                                        INTERVAL -(MOD(MINUTE(STR_TO_DATE(SUBSTRING(timestamp, 1, 19), '%Y-%m-%dT%H:%i:%s')), 10)) MINUTE
-                                                    ),
-                                                    '%Y-%m-%d %H:%i:00'
-                                                ) AS interval_end_time,
-                                                AVG(temp) AS avg_temp,
-                                                AVG(humidity) AS avg_humidity,
-                                                AVG(light) AS avg_light,
-                                                AVG(soil) AS avg_soil
-                                            FROM records
-                                            WHERE STR_TO_DATE(SUBSTRING(timestamp, 1, 19), '%Y-%m-%dT%H:%i:%s') >= UTC_TIMESTAMP() - INTERVAL 60 MINUTE
-                                            GROUP BY interval_end_time
-                                            ORDER BY interval_end_time DESC
-                                            LIMIT 6;
+                                                        DATE_FORMAT(
+                                                            DATE_ADD(
+                                                                STR_TO_DATE(SUBSTRING(timestamp, 1, 19), '%Y-%m-%dT%H:%i:%s'),
+                                                                INTERVAL -(MOD(MINUTE(STR_TO_DATE(SUBSTRING(timestamp, 1, 19), '%Y-%m-%dT%H:%i:%s')), 2)) MINUTE
+                                                            ),
+                                                            '%Y-%m-%d %H:%i:00'
+                                                        ) AS interval_end_time,
+                                                        AVG(temp) AS avg_temp,
+                                                        AVG(humidity) AS avg_humidity,
+                                                        AVG(light) AS avg_light,
+                                                        AVG(soil) AS avg_soil
+                                                    FROM records
+                                                    WHERE STR_TO_DATE(SUBSTRING(timestamp, 1, 19), '%Y-%m-%dT%H:%i:%s') >= UTC_TIMESTAMP() - INTERVAL 60 MINUTE
+                                                    GROUP BY interval_end_time
+                                                    ORDER BY interval_end_time DESC
+                                                    LIMIT 6;
+                                                    
     """, nativeQuery = true)
     List<Object[]> getSensorAverages();
 
