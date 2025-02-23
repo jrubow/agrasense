@@ -6,7 +6,7 @@ name: Build and deploy JAR app to Azure Web App - AsterLink
 on:
   push:
     branches:
-      - main
+      - detached6
   workflow_dispatch:
 
 jobs:
@@ -52,9 +52,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_73681A164CDE460585A5DA6B4B093F6C }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BD5C304862914649826F73B9E65B694A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_48C3BF7B2D714D5A833777499CFDBFAB }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4BBB993696EA4BDF97D3EE2F5CA7ABB4 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4852980EA3464899850997A33EEE8E2E }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB9C0EF9C7904364B546AD727719AC02 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
