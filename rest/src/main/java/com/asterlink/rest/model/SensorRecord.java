@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 public class SensorRecord {
     @Id
     private int record_id;
-    private int device_id;
+    private long device_id;
     private String timestamp;
     private double temp;
     private int humidity;
@@ -23,7 +23,7 @@ public class SensorRecord {
 
     public SensorRecord() {}
 
-    public SensorRecord(int record_id, int device_id, String timestamp, double temp, int humidity, int light, int soil) {
+    public SensorRecord(int record_id, long device_id, String timestamp, double temp, int humidity, int light, int soil) {
         this.record_id = record_id;
         this.device_id = device_id;
         this.timestamp = timestamp;
@@ -41,11 +41,11 @@ public class SensorRecord {
         this.record_id = record_id;
     }
 
-    public int getDevice_id() {
+    public long getDevice_id() {
         return device_id;
     }
 
-    public void setDevice_id(int device_id) {
+    public void setDevice_id(long device_id) {
         this.device_id = device_id;
     }
 

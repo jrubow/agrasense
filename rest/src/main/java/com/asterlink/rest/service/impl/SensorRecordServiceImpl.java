@@ -80,56 +80,16 @@ public class SensorRecordServiceImpl implements SensorRecordService {
     @Override
     public List<SensorAveragesResponse> getSensorAveragesRecord() {
         List<SensorAveragesResponse> averageResponses = new ArrayList<>();
-        List<SensorRecord> records = getAllSensorRecords();
 
-        if (records.isEmpty()) {
-            return averageResponses;
-        }
+        List<Object[]> results = sensorRecordRepository.getSensorAverages();
 
-        ZonedDateTime now = ZonedDateTime.now();
-
-        List<SensorRecord> filteredRecords = records.stream()
-                .filter(record -> {
-                    ZonedDateTime timestamp = ZonedDateTime.parse(record.getTimestamp(), DateTimeFormatter.ISO_DATE_TIME)
-                            .withZoneSameInstant(now.getZone());
-                    return ChronoUnit.MINUTES.between(timestamp, now) <= 60;
-                })
-                .collect(Collectors.toList());
-
-        if (filteredRecords.isEmpty()) {
-            return averageResponses;
-        }
-
-        filteredRecords.sort((r1, r2) -> r2.getTimestamp().compareTo(r1.getTimestamp()));
-
-        Map<String, List<SensorRecord>> groupedByInterval = filteredRecords.stream()
-                .collect(Collectors.groupingBy(record -> {
-                    ZonedDateTime timestamp = ZonedDateTime.parse(record.getTimestamp(), DateTimeFormatter.ISO_DATE_TIME)
-                            .withZoneSameInstant(now.getZone());
-                    int intervalStart = (timestamp.getMinute() / 10) * 10;
-                    ZonedDateTime intervalStartTime = timestamp.withMinute(intervalStart).withSecond(0).withNano(0);
-                    return intervalStartTime.format(DateTimeFormatter.ISO_DATE_TIME);
-                }));
-
-        List<Map.Entry<String, List<SensorRecord>>> sortedIntervals = new ArrayList<>(groupedByInterval.entrySet());
-        sortedIntervals.sort((a, b) -> b.getKey().compareTo(a.getKey()));
-
-        List<Map.Entry<String, List<SensorRecord>>> lastSixIntervals = sortedIntervals.stream()
-                .limit(6)
-                .toList();
-
-        for (Map.Entry<String, List<SensorRecord>> entry : lastSixIntervals) {
-            double avgTemp = entry.getValue().stream().mapToDouble(SensorRecord::getTemp).average().orElse(0);
-            double avgHumidity = entry.getValue().stream().mapToInt(SensorRecord::getHumidity).average().orElse(0);
-            double avgLight = entry.getValue().stream().mapToInt(SensorRecord::getLight).average().orElse(0);
-            double avgSoil = entry.getValue().stream().mapToInt(SensorRecord::getSoil).average().orElse(0);
-
+        for (Object[] row : results) {
             averageResponses.add(new SensorAveragesResponse(
-                    entry.getKey(),
-                    avgTemp,
-                    avgHumidity,
-                    avgLight,
-                    avgSoil
+                    row[0].toString(),  // Interval start time
+                    ((Number) row[1]).doubleValue(), // avgTemp
+                    ((Number) row[2]).doubleValue(), // avgHumidity
+                    ((Number) row[3]).doubleValue(), // avgLight
+                    ((Number) row[4]).doubleValue()  // avgSoil
             ));
         }
         return averageResponses;
