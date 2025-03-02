@@ -29,8 +29,8 @@ void updateLEDStatus();
 // Task to send sensor data every 1 seconds
 Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendSensorData);
 
-// Task to check connection status every 1 seconds
-Task taskCheckConnection(TASK_SECOND * 1, TASK_FOREVER, &updateLEDStatus);
+// Task to check connection status every 0.25 seconds
+Task taskCheckConnection(TASK_MILLISECOND * 250, TASK_FOREVER, &updateLEDStatus);
 
 
 void sendSensorData() {
@@ -142,4 +142,5 @@ void setup() {
 
 void loop() {
   mesh.update();
+  updateLEDStatus();
 }
