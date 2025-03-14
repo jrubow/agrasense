@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import DeviceInfo from "../components/DeviceInfo"
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -73,8 +74,8 @@ function HomePage() {
       {
         label,
         data,
-        borderColor: "rgba(75,192,192,1)",
-        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "#007bff",
+        backgroundColor: "#66b3ff",
       },
     ],
   });
@@ -82,28 +83,42 @@ function HomePage() {
   // Set up periodic data fetching every 10 seconds
   useEffect(() => {
     fetchData(); // Initial fetch
-    const interval = setInterval(fetchData, 10000); // Fetch data every 10 seconds
+    const interval = setInterval(fetchData, 10000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []); // Empty dependency array ensures this runs only once when component mounts
+    return () => clearInterval(interval);
+  }, []); 
+
+  const devices = [{"deviceId":99, "status":"Online", "lastOnline":"test_timestamp", "isSentinel":true}, 
+    {"deviceId":100, "status":"Online", "lastOnline":"test_timestamp", "isSentinel":false},
+    {"deviceId":101, "status":"Offline", "lastOnline":"test_timestamp", "isSentinel":false},
+    {"deviceId":102, "status":"Offline", "lastOnline":"test_timestamp", "isSentinel":false}];
+
+  const [selected, setSelected] = useState(100)
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px", height: "100vh" }}>
-      <div style={{ height: "300px" }}>
-        <h3>Average Temperature</h3>
-        <Line data={chartData("Temperature", temperatureData)} options={options2} />
+    <div>
+      <div className="devices">
+        {devices.map(device => (
+          <DeviceInfo device={device} selected={selected} setSelected={setSelected}/>
+        ))}
       </div>
-      <div style={{ height: "300px" }}>
-        <h3>Average Humidity</h3>
-        <Line data={chartData("Humidity", humidityData)} options={options2} />
-      </div>
-      <div style={{ height: "300px" }}>
-        <h3>Average Light</h3>
-        <Line data={chartData("Light", lightData)} options={options} />
-      </div>
-      <div style={{ height: "300px" }}>
-        <h3>Average Soil Moisture</h3>
-        <Line data={chartData("Soil", soilData)} options={options} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px", height: "100vh" }}>
+        <div style={{ height: "300px" }}>
+          <h3>Average Temperature</h3>
+          <Line data={chartData("Temperature", temperatureData)} options={options2} />
+        </div>
+        <div style={{ height: "300px" }}>
+          <h3>Average Humidity</h3>
+          <Line data={chartData("Humidity", humidityData)} options={options2} />
+        </div>
+        <div style={{ height: "300px" }}>
+          <h3>Average Light</h3>
+          <Line data={chartData("Light", lightData)} options={options} />
+        </div>
+        <div style={{ height: "300px" }}>
+          <h3>Average Soil Moisture</h3>
+          <Line data={chartData("Soil", soilData)} options={options} />
+        </div>
       </div>
     </div>
   );

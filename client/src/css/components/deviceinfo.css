@@ -1,0 +1,15 @@
+.device-info-container {
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    width: 220px;
+    align-items: baseline;
+    justify-content: space-evenly;
+    cursor: pointer;
+    padding: 15px;
+    padding: 2rem;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    margin: 0 1rem;
+}
