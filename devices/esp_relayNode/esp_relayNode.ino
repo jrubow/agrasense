@@ -2,11 +2,11 @@
 #include <DHT.h>
 #include <ArduinoJson.h>
 
-#define MESH_PREFIX "asterlink"
-#define MESH_PASSWORD "AsterLinkMesh2025$#"
+#define MESH_PREFIX "asterlink" //TODO generate a random id for different networks
+#define MESH_PASSWORD "AsterLinkMesh2025$#" // TODO generate a random password for different networks
 #define MESH_PORT 5555
 
-Scheduler userScheduler;  // Task scheduler for painlessMesh
+Scheduler userScheduler;  // Task scheduler for painlessMesh. It runs asynchronous tasks.
 
 // Sensor Pins
 #define DHTPIN 4  // GPIO for DHT11
@@ -14,30 +14,31 @@ Scheduler userScheduler;  // Task scheduler for painlessMesh
 #define LIGHT_SENSOR_PIN 34   // GPIO pin for Light Sensor (LDR)
 #define SOIL_MOISTURE_PIN 35  // GPIO pin for Soil Moisture Sensor
 
-// LED Pins
+// LED Pins - TODO - simplify by adding just 1 led that flashes and has different modes
 #define GREEN_LED_PIN 19  // Green LED - ON when connected
 #define RED_LED_PIN 18    // Red LED - ON when disconnected
 
-// Initialize DHT Sensor
+// Initialize DHT Sensor and painlessMesh
 DHT dht(DHTPIN, DHTTYPE);
 painlessMesh mesh;
 
-// Function prototype
+// Function prototype - syntax
 void sendSensorData();
 void updateLEDStatus();
 
-// Task to send sensor data every 1 seconds
-Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendSensorData);
+// Task to send sensor data every 60 seconds
+Task taskSendMessage(TASK_SECOND * 60, TASK_FOREVER, &sendSensorData);
 
-// Task to check connection status every 0.25 seconds
-Task taskCheckConnection(TASK_MILLISECOND * 250, TASK_FOREVER, &updateLEDStatus);
+// Task to check connection status every 1 seconds
+Task taskCheckConnection(TASK_SECOND * 1, TASK_FOREVER, &updateLEDStatus);
 
 
 void sendSensorData() {
-  Serial.print("Node Count: ");
-  Serial.println(mesh.getNodeList().size());
+  //Serial.print("Node Count: ");
+  //Serial.println(mesh.getNodeList().size());
 
-
+  // TODO - create our own template
+  
   // Create JSON object
   StaticJsonDocument<200> jsonDoc;
 
@@ -69,42 +70,48 @@ void sendSensorData() {
   String msg;
   serializeJson(jsonDoc, msg);
 
-  // Send the message over the mesh network
+  // Send the message over the mesh network to all nodes without looking at their IDs
   mesh.sendBroadcast(msg);
+
+  // TODO - look into sendSingle()
 
   // Print debug message
   Serial.println("Sent JSON: " + msg);
 }
 
+// TODO
 // Function to update LED status based on connectivity
 void updateLEDStatus() {
   int nodeCount = mesh.getNodeList().size();
   if (nodeCount > 0) {
-    // if it is connected
-    digitalWrite(GREEN_LED_PIN, HIGH);
-    digitalWrite(RED_LED_PIN, LOW); 
+    digitalWrite(GREEN_LED_PIN, HIGH);  // Try LOW instead of HIGH
+    digitalWrite(RED_LED_PIN, LOW);   // Try HIGH instead of LOW
   } else {
-    // if not connected
     digitalWrite(GREEN_LED_PIN, LOW);
     digitalWrite(RED_LED_PIN, HIGH);
   }
 }
 
 // Callbacks for painlessMesh
+
+//triggered when a node recieves a message
 void receivedCallback(uint32_t from, String &msg) {
   Serial.printf("Received from %u msg=%s\n", from, msg.c_str());
 }
 
+// Triggered when a new node connects to the mesh
 void newConnectionCallback(uint32_t nodeId) {
   Serial.printf("New Connection, nodeId = %u\n", nodeId);
   updateLEDStatus();
 }
 
+// Triggered when there are any changes in mesh connections (e.g., node joins/leaves).
 void changedConnectionCallback() {
   Serial.println("Changed connections");
   updateLEDStatus();
 }
 
+// TODO what does this do? And why do we need it?
 void nodeTimeAdjustedCallback(int32_t offset) {
   Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(), offset);
 }
@@ -142,5 +149,4 @@ void setup() {
 
 void loop() {
   mesh.update();
-  updateLEDStatus();
 }
