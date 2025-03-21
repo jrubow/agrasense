@@ -7,7 +7,7 @@ import com.asterlink.rest.repository.RecordRepository;
 import com.asterlink.rest.service.RecordService;
 
 /**
- *
+ * Implementation for Record service.
  * @author Josh Rubow (jrubow), Gleb Bereziuk (gl3bert)
  */
 
