@@ -14,14 +14,20 @@ const char* externalSSID = "test1234";
 const char* externalPassword = "password123";
 
 // API endpoints
-const char* batchApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/reports/batch";
-const char* initApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/sentinel/initialize";
+// const char* batchApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/reports/batch";
+// const char* initApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/sentinel/initialize";
+// const char* initRelayApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/relay/initialize/batch";
+
+const char* batchApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/record/batch";
+const char* initApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/devices/sentinel/initialize";
+const char* initRelayApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/devices/relay/initialize/batch";
 
 Scheduler userScheduler;
 Preferences preferences;
 painlessMesh mesh;
 
 std::vector<String> dataBuffer;
+std::vector<String> initBuffer;
 unsigned long lastSentTime = 0;
 const unsigned long interval = 60000;  // 60 seconds interval
 const char* ntpServer = "time.google.com";
@@ -29,12 +35,14 @@ const long gmtOffset_sec = -5;
 const int daylightOffset_sec = 0;
 
 // Configuration Variables
-int state;
-int deviceId;
-int meshInitialized;
+uint64_t state;
+uint64_t deviceId;
+uint64_t meshInitialized;
+uint64_t sentinelId;
+
 
 // Global variable to store registered device id from initialization response
-uint32_t registeredDeviceId = 0;
+uint64_t registeredDeviceId = 0;
 
 void processReceivedData(const String& msg);
 
@@ -87,16 +95,15 @@ void processReceivedData(const String& msg) {
       Serial.printf("Light Level: %d%%\n", light_level);
       Serial.printf("Soil Moisture: %d%%\n", soil_moisture);
       Serial.println("----------------------------");
-      float temperatureF = temperature * 9.0 / 5.0 + 32.0;
+      
 
       // Create JSON report for temperature reading in the new batch format
       StaticJsonDocument<256> pushDoc;
       // Use the registered device id (if set) instead of the sensor's device id.
-      uint32_t reportDeviceId = (registeredDeviceId != 0) ? registeredDeviceId : sensorDeviceId;
-      pushDoc["device_id"] = reportDeviceId;
-      pushDoc["report_type"] = "TEMP";
-      pushDoc["value"] = temperatureF;
-      pushDoc["units"] = "Fahrenheit";
+      pushDoc["device_id"] = sensorDeviceId;
+      pushDoc["type"] = TEMPERATURE;
+      pushDoc["value"] = temperature;
+      // pushDoc["units"] = "Fahrenheit";
 
       String pushPayload;
       serializeJson(pushDoc, pushPayload);
@@ -104,14 +111,14 @@ void processReceivedData(const String& msg) {
       dataBuffer.push_back(pushPayload);
     } else if (instructionType == CONFIGURE_DEVICE_ID) {
       Serial.printf("Received CONFIGURE_DEVICE_ID : %d\n", jsonDoc["device_id"]);
+      jsonDoc.remove("instruction_type");
+      String pushDevice;
+      serializeJson(jsonDoc, pushDevice);
+      initBuffer.push_back(pushDevice);
     }
 }
 
 void sendDataToAPI() {
-    if (dataBuffer.empty()) {
-        Serial.println("No data to send.");
-        return;
-    }
 
     Serial.println("Connecting to WiFi...");
     WiFi.begin(externalSSID, externalPassword);
@@ -131,37 +138,78 @@ void sendDataToAPI() {
     // Build batch JSON array payload
     StaticJsonDocument<2048> batchJson;
     JsonArray jsonArray = batchJson.to<JsonArray>();
-    String timestamp = getFormattedTime();
-    for (const auto& entry : dataBuffer) {
-        StaticJsonDocument<256> tempDoc;
-        deserializeJson(tempDoc, entry);
-        tempDoc["timestamp"] = timestamp;
-        jsonArray.add(tempDoc);
-    }
-
-    String batchPayload;
-    serializeJson(batchJson, batchPayload);
-    Serial.println("Batch Payload:");
-    Serial.println(batchPayload);
-
     HTTPClient http;
-    http.begin(batchApiEndpoint);
-    http.addHeader("X-API-KEY", "user");
-    http.addHeader("Content-Type", "application/json");
+    String batchPayload;
+    
+    if (!dataBuffer.empty()) {
+      String timestamp = getFormattedTime();
+      for (const auto& entry : dataBuffer) {
+          StaticJsonDocument<256> tempDoc;
+          deserializeJson(tempDoc, entry);
+          // tempDoc["timestamp"] = timestamp;
+          jsonArray.add(tempDoc);
+      }
 
-    int httpResponseCode = http.POST(batchPayload);
-    Serial.printf("HTTP Response Code: %d\n", httpResponseCode);
+      
+      serializeJson(batchJson, batchPayload);
+      Serial.println("Batch Payload:");
+      Serial.println(batchPayload);
 
-    if (httpResponseCode > 0) {
-        Serial.println("Data sent successfully!");
-        dataBuffer.clear();
+      
+          http.begin(batchApiEndpoint);
+      http.addHeader("X-API-KEY", "user");
+      http.addHeader("Content-Type", "application/json");
+
+      int httpResponseCode = http.POST(batchPayload);
+      Serial.printf("HTTP Response Code: %d\n", httpResponseCode);
+
+      if (httpResponseCode > 0) {
+          Serial.println("Data sent successfully!");
+          dataBuffer.clear();
+      } else {
+          Serial.println("Failed to send data.");
+      }
     } else {
-        Serial.println("Failed to send data.");
+      Serial.println("No data to send.");
     }
 
-    http.end();
-    WiFi.disconnect(true);
-    Serial.println("Disconnected from WiFi.");
+    if (!initBuffer.empty()) {
+      http.begin(initRelayApiEndpoint);
+      http.addHeader("X-API-KEY", "user");
+      http.addHeader("Content-Type", "application/json");
+
+      batchJson.clear();
+      jsonArray = batchJson.to<JsonArray>();
+      for (const auto& entry : initBuffer) {
+          StaticJsonDocument<256> tempDoc;
+          deserializeJson(tempDoc, entry);
+          tempDoc["sentinel_id"] = sentinelId;
+          jsonArray.add(tempDoc);
+      }
+
+      serializeJson(batchJson, batchPayload);
+      Serial.println("Batch Payload:");
+      Serial.println(batchPayload);
+
+      int httpResponseCode = http.POST(batchPayload);
+      Serial.printf("HTTP Response Code: %d\n", httpResponseCode);
+
+      if (httpResponseCode > 0) {
+          Serial.println("Data sent successfully!");
+          dataBuffer.clear();
+      } else {
+          Serial.println("Failed to send data.");
+      }
+
+      http.end();
+      WiFi.disconnect(true);
+      Serial.println("Disconnected from WiFi.");
+    } else {
+      Serial.printf("No devices to init\n");
+    }
+
+    initBuffer.clear();
+    dataBuffer.clear();
 }
 
 String getFormattedTime() {
@@ -174,6 +222,19 @@ String getFormattedTime() {
     char buffer[30];
     strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.000Z", &timeinfo);
     return String(buffer);
+}
+
+uint64_t macAddressToInteger(const String& mac) {
+    uint64_t macInt = 0;
+    
+    // Remove colons from the MAC address
+    String cleanedMAC = mac;
+    cleanedMAC.replace(":", "");
+
+    // Convert the cleaned MAC address (hex string) to an integer
+    macInt = strtoull(cleanedMAC.c_str(), NULL, 16);
+    
+    return macInt;
 }
 
 void initializeDevice() {
@@ -191,7 +252,9 @@ void initializeDevice() {
     }
     
     StaticJsonDocument<256> initDoc;
-    initDoc["device_id"] = mesh.getNodeId();
+    sentinelId = macAddressToInteger(WiFi.macAddress());
+    initDoc["device_id"] = sentinelId;
+    initDoc["password"] = "password";
     
     String initPayload;
     serializeJson(initDoc, initPayload);
