@@ -47,6 +47,18 @@ public abstract class Device {
         this.deployedDate = deployedDate;
     }
 
+    // Short constructor
+    public Device(int deviceId) {
+        this.deviceId = deviceId;
+        this.latitude = 0.0;
+        this.longitude = 0.0;
+        this.batteryLife = 0.0;
+        this.lastOnline = null;
+        this.deployed = false;
+        this.deployedDate = null;
+        this.isConnected = false;
+    }
+
     // Getters and Setters
     public int getDeviceId() { return deviceId; }
     public void setDeviceId(int deviceId) { this.deviceId = deviceId; }

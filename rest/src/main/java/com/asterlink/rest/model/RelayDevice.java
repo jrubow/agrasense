@@ -28,6 +28,17 @@ public class RelayDevice extends Device {
     @JsonCreator
     public RelayDevice(
             @JsonProperty("device_id") int deviceId,
+            @JsonProperty("sentinel_id") int sentinelId) {
+        super(deviceId);
+        this.sentinelId = sentinelId;
+        this.sentinelConnection = false;
+    }
+
+    /*
+    // Main Constructor
+    @JsonCreator
+    public RelayDevice(
+            @JsonProperty("device_id") int deviceId,
             @JsonProperty("latitude") double latitude,
             @JsonProperty("longitude") double longitude,
             @JsonProperty("battery_life") double batteryLife,
@@ -41,6 +52,7 @@ public class RelayDevice extends Device {
         this.sentinelId = sentinelId;
         this.sentinelConnection = sentinelConnection;
     }
+     */
 
     // Getters and Setters.
     public int getSentinelId() { return this.sentinelId; }
