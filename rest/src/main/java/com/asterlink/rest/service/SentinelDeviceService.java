@@ -10,6 +10,7 @@ import java.util.Map;
 
 public interface SentinelDeviceService {
     public int createSentinelDevice(SentinelDevice device);
+    public int createSentinelDeviceBatch(List<SentinelDevice> devices);
     public boolean updateSentinelDevice(Map<String, Object> updates);
     public String deleteSentinelDevice(int id);
     public SentinelDevice getSentinelDevice(int id);

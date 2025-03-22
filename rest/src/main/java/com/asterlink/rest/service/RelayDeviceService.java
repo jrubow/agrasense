@@ -9,10 +9,11 @@ import java.util.Map;
  */
 
 public interface RelayDeviceService {
-    public boolean createRelayDevice(RelayDevice device);
-    public String updateRelayDevice(Map<String, Object> updates);
-    public String deleteRelayDevice(int Relay_id);
-    public RelayDevice getRelayDevice(int Relay_id);
-    public List<RelayDevice> getAllRelayDevices();
-    // boolean registerRelayDevice(RelayDevice device);
+    boolean createRelayDevice(RelayDevice device);
+    boolean createRelayDeviceBatch(List<RelayDevice> devices);
+    String updateRelayDevice(Map<String, Object> updates);
+    String deleteRelayDevice(int relay_id);
+    RelayDevice getRelayDevice(int Relay_id);
+    List<RelayDevice> getAllRelayDevices();
+    boolean registerRelayDevice(RelayDevice device);
 }

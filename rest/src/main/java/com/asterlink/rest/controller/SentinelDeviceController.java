@@ -17,18 +17,26 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/devices/sentinel")
 public class SentinelDeviceController {
-
+    // Set up service access.
     SentinelDeviceService sentinelDeviceService;
-
     public SentinelDeviceController(SentinelDeviceService sentinelDeviceService) {
         this.sentinelDeviceService = sentinelDeviceService;
     }
 
+    // Initialize single sentinel device.
     @PostMapping("/initialize")
     public ResponseEntity<String> initalizeSentinelDevice(@RequestBody SentinelDevice device) {
         int isCreated = sentinelDeviceService.createSentinelDevice(device);
         return isCreated != -1 ? ResponseEntity.ok("SENTINEL DEVICE REGISTERED " + isCreated) : ResponseEntity.status(400).body("SENTINEL DEVICE ALREADY EXISTS");
     }
+
+    // Initialize a batch of sentinel devices.
+    @PostMapping("/initialize/batch")
+    public ResponseEntity<String> initalizeSentinelDeviceBatch(@RequestBody List<SentinelDevice> devices) {
+        int isCreated = sentinelDeviceService.createSentinelDeviceBatch(devices);
+        return isCreated != -1 ? ResponseEntity.ok("SENTINEL DEVICES REGISTERED; LAST ID: " + isCreated) : ResponseEntity.status(400).body("ERROR REGISTERING DEVICES");
+    }
+
 
     @PutMapping("/update")
     public ResponseEntity<String> updateSentinelDevice(@RequestBody Map<String, Object> updates) {

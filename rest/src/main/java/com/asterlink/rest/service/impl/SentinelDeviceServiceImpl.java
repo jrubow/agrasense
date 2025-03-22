@@ -35,6 +35,16 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
         }
     }
 
+    @Override
+    public int createSentinelDeviceBatch(List<SentinelDevice> devices) {
+        for (SentinelDevice d: devices) {
+            if (createSentinelDevice(d) == -1) {
+                return -1;
+            }
+        }
+        return sentinelDeviceRepository.findMaxDeviceId();
+    }
+
 
     @Override
     public boolean updateSentinelDevice(Map<String, Object> updates) {

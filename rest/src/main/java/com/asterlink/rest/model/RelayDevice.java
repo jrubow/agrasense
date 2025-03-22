@@ -2,6 +2,8 @@ package com.asterlink.rest.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -23,9 +25,18 @@ public class RelayDevice extends Device {
     public RelayDevice() {};
 
     // Main Constructor
-    public RelayDevice(int deviceId, double latitude, double longitude, double batteryLife,
-                       LocalDateTime lastOnline, LocalDateTime deployedDate, boolean deployed,
-                       boolean isConnected, int sentinelId, boolean sentinelConnection) {
+    @JsonCreator
+    public RelayDevice(
+            @JsonProperty("device_id") int deviceId,
+            @JsonProperty("latitude") double latitude,
+            @JsonProperty("longitude") double longitude,
+            @JsonProperty("battery_life") double batteryLife,
+            @JsonProperty("last_online") LocalDateTime lastOnline,
+            @JsonProperty("deployed_date") LocalDateTime deployedDate,
+            @JsonProperty("deployed") boolean deployed,
+            @JsonProperty("is_connected") boolean isConnected,
+            @JsonProperty("sentinel_id") int sentinelId,
+            @JsonProperty("sentinel_connection") boolean sentinelConnection) {
         super(deviceId, latitude, longitude, batteryLife, lastOnline, deployedDate, deployed);
         this.sentinelId = sentinelId;
         this.sentinelConnection = sentinelConnection;

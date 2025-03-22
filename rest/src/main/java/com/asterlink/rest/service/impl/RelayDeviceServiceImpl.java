@@ -36,6 +36,15 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
         }
     }
 
+    @Override
+    public boolean createRelayDeviceBatch(List<RelayDevice> devices) {
+        for (RelayDevice d: devices) {
+            if (!createRelayDevice(d)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public String updateRelayDevice(Map<String, Object> updates) {
@@ -91,5 +100,10 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
     @Override
     public List<RelayDevice> getAllRelayDevices() {
         return relayDeviceRepository.findAll();
+    }
+
+    @Override
+    public boolean registerRelayDevice(RelayDevice device) {
+        return false;
     }
 }
