@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("api/record")
+@RequestMapping("/api/record")
 public class RecordController {
 
     // Set up service access.
