@@ -56,7 +56,7 @@ void sendSensorData() {
   float humidity = dht.readHumidity();
   int raw_light = analogRead(LIGHT_SENSOR_PIN);
   int raw_soil = analogRead(SOIL_MOISTURE_PIN);
-  uint32_t device_id = mesh.getNodeId();
+  uint64_t device_id = mesh.getNodeId();
 
   // Ensure we have valid sensor readings
   if (isnan(temperature) || isnan(humidity)) {
@@ -99,8 +99,6 @@ void updateLEDStatus() {
   }
 }
 
-// Callbacks for painlessMesh
-
 //triggered when a node recieves a message
 uint64_t macAddressToInteger(const String& mac) {
     uint64_t macInt = 0;
@@ -115,7 +113,8 @@ uint64_t macAddressToInteger(const String& mac) {
     return macInt;
 }
 
-void receivedCallback(uint32_t from, String &msg) {
+// Callbacks for painlessMesh
+void receivedCallback(uint64_t from, String &msg) {
   Serial.printf("Received from %u msg=%s\n", from, msg.c_str());
   StaticJsonDocument<256> jsonDoc;
   DeserializationError error = deserializeJson(jsonDoc, msg);
@@ -127,7 +126,7 @@ void receivedCallback(uint32_t from, String &msg) {
   }
 
   // Read sensor data fields from the incoming message
-  uint32_t instructionType = jsonDoc["instruction_type"];
+  uint64_t instructionType = jsonDoc["instruction_type"];
 
   if (instructionType == CONFIGURE) {
     sentinelId = jsonDoc["sentinel_id"];
@@ -144,6 +143,7 @@ void receivedCallback(uint32_t from, String &msg) {
     jsonDoc.clear();
     jsonDoc["instruction_type"] = CONFIGURE_DEVICE_ID;
     jsonDoc["device_id"] = deviceId;
+    jsonDoc["password"] = "password";
     String instruction;
     serializeJson(jsonDoc, instruction);
     mesh.sendSingle(sentinelId, instruction);
