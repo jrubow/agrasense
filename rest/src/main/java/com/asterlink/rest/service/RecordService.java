@@ -14,6 +14,6 @@ public interface RecordService {
     boolean createRecord(Record record);
     public Record getRecord(int recordId);
     public List<Record> getAllRecords();
-    public List<Record> getRecordsByDevice(int deviceId);
+    public List<Record> getRecordsByDevice(long deviceId);
     public void createBatchRecord(List<Record> records);
 }

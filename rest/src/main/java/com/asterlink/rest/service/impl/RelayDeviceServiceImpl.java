@@ -48,7 +48,7 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
 
     @Override
     public String updateRelayDevice(Map<String, Object> updates) {
-        int id = (Integer) updates.get("device_id");
+        long id = (Long) updates.get("device_id");
         if (id < 0) {
             throw new IllegalArgumentException("device_id is required for updating user details.");
         }
@@ -87,13 +87,13 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
     }
 
     @Override
-    public String deleteRelayDevice(int id) {
+    public String deleteRelayDevice(long id) {
         relayDeviceRepository.deleteById(id);
         return "RELAY DEVICE DELETED FROM DATABASE";
     }
 
     @Override
-    public RelayDevice getRelayDevice(int id) {
+    public RelayDevice getRelayDevice(long id) {
         return relayDeviceRepository.findById(id).orElse(null);
     }
 

@@ -48,13 +48,13 @@ public class InstructionServiceImpl implements InstructionService {
 
     // Return list of instructions for a specific sentinelId
     @Override
-    public List<Instruction> getInstructionsBySentinelId(int sentinelId) {
+    public List<Instruction> getInstructionsBySentinelId(long sentinelId) {
         return instructionRepository.findBySentinelId(sentinelId);
     }
 
     // Return list of instructions for a specific deviceId
     @Override
-    public List<Instruction> getInstructionsByDeviceId(int deviceId) {
+    public List<Instruction> getInstructionsByDeviceId(long deviceId) {
         return instructionRepository.findByDeviceId(deviceId);
     }
 

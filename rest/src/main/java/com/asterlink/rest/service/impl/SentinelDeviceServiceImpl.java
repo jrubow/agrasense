@@ -25,7 +25,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     }
 
     @Override
-    public int createSentinelDevice(SentinelDevice device) {
+    public long createSentinelDevice(SentinelDevice device) {
         try {
             sentinelDeviceRepository.save(device);
             return sentinelDeviceRepository.findMaxDeviceId();
@@ -36,7 +36,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     }
 
     @Override
-    public int createSentinelDeviceBatch(List<SentinelDevice> devices) {
+    public long createSentinelDeviceBatch(List<SentinelDevice> devices) {
         for (SentinelDevice d: devices) {
             if (createSentinelDevice(d) == -1) {
                 return -1;
@@ -48,7 +48,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
 
     @Override
     public boolean updateSentinelDevice(Map<String, Object> updates) {
-        int id = (Integer) updates.get("device_id");
+        long id = (Long) updates.get("device_id");
         System.out.println(id);
         if (id < 0) {
             throw new IllegalArgumentException("device_id is required for updating user details.");
@@ -98,13 +98,13 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     }
 
     @Override
-    public String deleteSentinelDevice(int id) {
+    public String deleteSentinelDevice(long id) {
         sentinelDeviceRepository.deleteById(id);
         return "SENTINEL DEVICE DELETED FROM DATABASE";
     }
 
     @Override
-    public SentinelDevice getSentinelDevice(int id) {
+    public SentinelDevice getSentinelDevice(long id) {
         return sentinelDeviceRepository.findById(id).orElse(null);
     }
 
@@ -114,7 +114,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     }
 
     @Override
-    public String claimSentinelDevice(int deviceId, String password, int clientId) {
+    public String claimSentinelDevice(long deviceId, String password, int clientId) {
         System.out.println(clientId);
         SentinelDevice device = sentinelDeviceRepository.findById(deviceId).orElse(null);
         if (device == null || device.getPassword() == null) {

@@ -16,7 +16,7 @@ public abstract class Device {
 
     @Id
     @Column(name="device_id")
-    private int deviceId;
+    private long deviceId;
     @Column(name="latitude")
     private double latitude;
     @Column(name="longitude")
@@ -36,7 +36,7 @@ public abstract class Device {
     public Device() {}
 
     // Parameterized constructor
-    public Device(int deviceId, double latitude, double longitude, double batteryLife, LocalDateTime lastOnline,
+    public Device(long deviceId, double latitude, double longitude, double batteryLife, LocalDateTime lastOnline,
                     LocalDateTime deployedDate, boolean deployed) {
         this.deviceId = deviceId;
         this.latitude = latitude;
@@ -48,7 +48,7 @@ public abstract class Device {
     }
 
     // Short constructor
-    public Device(int deviceId) {
+    public Device(long deviceId) {
         this.deviceId = deviceId;
         this.latitude = 0.0;
         this.longitude = 0.0;
@@ -60,7 +60,7 @@ public abstract class Device {
     }
 
     // Getters and Setters
-    public int getDeviceId() { return deviceId; }
+    public long getDeviceId() { return deviceId; }
     public void setDeviceId(int deviceId) { this.deviceId = deviceId; }
     public double getLatitude() { return latitude; }
     public void setLatitude(double latitude) { this.latitude = latitude; }

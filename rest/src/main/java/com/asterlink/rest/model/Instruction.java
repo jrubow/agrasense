@@ -20,9 +20,9 @@ public class Instruction {
     @Column(name="instruction_id")
     private int instructionId;
     @Column(name="sentinel_id")
-    private int sentinelId;
+    private long sentinelId;
     @Column(name="device_id")
-    private int deviceId;
+    private long deviceId;
     @Column(name="instruction_type")
     private int instructionType;
     @Column(name="status")
@@ -35,8 +35,8 @@ public class Instruction {
 
     // Default constructor.
     public Instruction(
-            @JsonProperty("sentinel_id") int sentinelId,
-            @JsonProperty("device_id") int deviceId,
+            @JsonProperty("sentinel_id") long sentinelId,
+            @JsonProperty("device_id") long deviceId,
             @JsonProperty("instruction_type") int instructionType) {
         this.sentinelId = sentinelId;
         this.deviceId = deviceId;
@@ -46,7 +46,7 @@ public class Instruction {
     }
 
     // Default constructor.
-    public Instruction(int sentinelId, int deviceId, int instructionType, int status, int errorId) {
+    public Instruction(long sentinelId, long deviceId, int instructionType, int status, int errorId) {
         this.sentinelId = sentinelId;
         this.deviceId = deviceId;
         this.instructionType = instructionType;
@@ -57,9 +57,9 @@ public class Instruction {
     // Getters and Setters.
     public int getInstructionId() { return instructionId; }
     public void setInstructionId(int instructionId) { this.instructionId = instructionId; }
-    public int getSentinelId() { return sentinelId; }
+    public long getSentinelId() { return sentinelId; }
     public void setSentinelId(int sentinelId) { this.sentinelId = sentinelId; }
-    public int getDeviceId() { return deviceId; }
+    public long getDeviceId() { return deviceId; }
     public void setDeviceId(int deviceId) { this.deviceId = deviceId; }
     public int getTypeId() { return instructionType; }
     public void setInstructionType(int instructionType) { this.instructionType = instructionType; }

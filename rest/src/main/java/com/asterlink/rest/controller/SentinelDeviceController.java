@@ -26,14 +26,14 @@ public class SentinelDeviceController {
     // Initialize single sentinel device.
     @PostMapping("/initialize")
     public ResponseEntity<String> initalizeSentinelDevice(@RequestBody SentinelDevice device) {
-        int isCreated = sentinelDeviceService.createSentinelDevice(device);
+        long isCreated = sentinelDeviceService.createSentinelDevice(device);
         return isCreated != -1 ? ResponseEntity.ok("SENTINEL DEVICE REGISTERED " + isCreated) : ResponseEntity.status(400).body("SENTINEL DEVICE ALREADY EXISTS");
     }
 
     // Initialize a batch of sentinel devices.
     @PostMapping("/initialize/batch")
     public ResponseEntity<String> initalizeSentinelDeviceBatch(@RequestBody List<SentinelDevice> devices) {
-        int isCreated = sentinelDeviceService.createSentinelDeviceBatch(devices);
+        long isCreated = sentinelDeviceService.createSentinelDeviceBatch(devices);
         return isCreated != -1 ? ResponseEntity.ok("SENTINEL DEVICES REGISTERED; LAST ID: " + isCreated) : ResponseEntity.status(400).body("ERROR REGISTERING DEVICES");
     }
 
@@ -50,7 +50,7 @@ public class SentinelDeviceController {
 
     @PostMapping("/claim")
     public ResponseEntity<String> claimSentinelDevice(
-            @RequestParam("device_id") int deviceId,
+            @RequestParam("device_id") long deviceId,
             @RequestParam("password") String password,
             @RequestParam("client_id") int clientId) {
         String claimRes = "";

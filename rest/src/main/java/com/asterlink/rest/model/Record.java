@@ -23,7 +23,7 @@ public class Record {
     @Column(name="record_id")
     private int recordId;
     @Column(name="device_id")
-    private int deviceId;
+    private long deviceId;
     @Column(name="timestamp")
     private LocalDateTime timestamp;
     @Column(name="type")
@@ -37,7 +37,7 @@ public class Record {
     // JSON parsing.
     @JsonCreator
     public Record(
-            @JsonProperty("device_id") int deviceId,
+            @JsonProperty("device_id") long deviceId,
             @JsonProperty("type") int type,
             @JsonProperty("value") float value) {
         this.deviceId = deviceId;
@@ -63,7 +63,7 @@ public class Record {
     // Getters and Setters.
     public int getRecordId() { return recordId; }
     public void setRecordId(int recordId) { this.recordId = recordId; }
-    public int getDeviceId() { return deviceId; }
+    public long getDeviceId() { return deviceId; }
     public void setDeviceId(int deviceId) { this.deviceId = deviceId; }
     public LocalDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }

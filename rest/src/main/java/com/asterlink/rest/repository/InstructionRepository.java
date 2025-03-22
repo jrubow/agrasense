@@ -16,11 +16,11 @@ public interface InstructionRepository extends JpaRepository<Instruction, Intege
 
     // Find all instructions for a specific sentinelId.
     @Query("SELECT i FROM Instruction i WHERE i.sentinelId = :sentinelId")
-    List<Instruction> findBySentinelId(int sentinelId);
+    List<Instruction> findBySentinelId(long sentinelId);
 
     // Find all instructions for a specific deviceId.
     @Query("SELECT i FROM Instruction i WHERE i.deviceId = :deviceId")
-    List<Instruction> findByDeviceId(int deviceId);
+    List<Instruction> findByDeviceId(long deviceId);
 
     // Find last instruction ID in the table.
     @Query("SELECT MAX(i.instructionId) FROM Instruction i")

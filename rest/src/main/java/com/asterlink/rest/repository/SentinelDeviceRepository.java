@@ -11,7 +11,7 @@ import java.util.List;
  * @author jrubow
  */
 
-public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, Integer> {
+public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, Long> {
 
     // @Modifying
     // @Transactional
@@ -23,5 +23,5 @@ public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, 
     List<SentinelDevice> findByClientId(int clientId);
 
     @Query("SELECT MAX(r.deviceId) FROM SentinelDevice r")
-    Integer findMaxDeviceId();
+    Long findMaxDeviceId();
 }

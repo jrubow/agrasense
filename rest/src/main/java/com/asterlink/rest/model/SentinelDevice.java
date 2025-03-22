@@ -23,10 +23,10 @@ public class SentinelDevice extends Device {
     // Additional fields specific to SentinelDevice
     @Column(name="num_connected_devices")
     private int numConnectedDevices;
-    @Column(name="password")
-    private String password;
     @Column(name="client_id")
     private int clientId;
+    @Column(name="password")
+    private String password;
 
     // Default constructor
     public SentinelDevice() {}
@@ -34,7 +34,7 @@ public class SentinelDevice extends Device {
     // Parameterized constructor
     @JsonCreator
     public SentinelDevice(
-            @JsonProperty("device_id") int deviceId,
+            @JsonProperty("device_id") long deviceId,
             @JsonProperty("latitude") double latitude,
             @JsonProperty("longitude") double longitude,
             @JsonProperty("battery_life") double batteryLife,

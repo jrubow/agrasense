@@ -1,7 +1,5 @@
 package com.asterlink.rest.model;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
@@ -17,9 +15,11 @@ import jakarta.persistence.Table;
 @Table(name = "relay_devices")
 public class RelayDevice extends Device {
     @Column(name="sentinel_id")
-    private int sentinelId;
+    private long sentinelId;
     @Column(name="sentinel_connection")
     private boolean sentinelConnection;
+    @Column(name="password")
+    private String password;
 
     // Default Constructor
     public RelayDevice() {};
@@ -27,11 +27,13 @@ public class RelayDevice extends Device {
     // Main Constructor
     @JsonCreator
     public RelayDevice(
-            @JsonProperty("device_id") int deviceId,
-            @JsonProperty("sentinel_id") int sentinelId) {
+            @JsonProperty("device_id") long deviceId,
+            @JsonProperty("sentinel_id") long sentinelId,
+            @JsonProperty("password") String password) {
         super(deviceId);
         this.sentinelId = sentinelId;
         this.sentinelConnection = false;
+        this.password = password;
     }
 
     /*
@@ -55,8 +57,10 @@ public class RelayDevice extends Device {
      */
 
     // Getters and Setters.
-    public int getSentinelId() { return this.sentinelId; }
-    public void setSentinelId(int sentinelId) { this.sentinelId = sentinelId; }
+    public long getSentinelId() { return this.sentinelId; }
+    public void setSentinelId(long sentinelId) { this.sentinelId = sentinelId; }
     public boolean getSentinelConnection() { return this.sentinelConnection; }
     public void setSentinelConnection(boolean sentinelConnection) { this.sentinelConnection = sentinelConnection; }
+    public String getPassword() { return this.password; }
+    public void setPassword(String password) { this.password = password; }
 }

@@ -57,7 +57,7 @@ public class RecordServiceImpl implements RecordService {
 
     // Get records by device ID.
     @Override
-    public List<Record> getRecordsByDevice(int deviceId) {
+    public List<Record> getRecordsByDevice(long deviceId) {
         return recordRepository.findRecordsByDeviceId(deviceId);
     }
 

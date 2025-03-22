@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author jrubow
  */
 
-public interface RelayDeviceRepository extends JpaRepository<RelayDevice, Integer> {
+public interface RelayDeviceRepository extends JpaRepository<RelayDevice, Long> {
     // @Modifying
     // @Transactional
     // @Query("UPDATE User u SET u.login_attempts = 0 WHERE u.username = :username")

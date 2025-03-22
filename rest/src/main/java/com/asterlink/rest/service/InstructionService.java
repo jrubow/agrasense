@@ -12,6 +12,6 @@ import java.util.List;
 public interface InstructionService {
     boolean createInstruction(Instruction instruction);
     boolean deleteInstruction(int instructionId);
-    List<Instruction> getInstructionsBySentinelId(int sentinelId);
-    List<Instruction> getInstructionsByDeviceId(int deviceId);
+    List<Instruction> getInstructionsBySentinelId(long sentinelId);
+    List<Instruction> getInstructionsByDeviceId(long deviceId);
 }

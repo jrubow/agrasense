@@ -19,5 +19,5 @@ public interface RecordRepository extends JpaRepository<Record, Integer> {
     Integer findMaxRecordId();
 
     @Query("SELECT r FROM Record r WHERE r.deviceId = :deviceId")
-    List<Record> findRecordsByDeviceId(int deviceId);
+    List<Record> findRecordsByDeviceId(long deviceId);
 }

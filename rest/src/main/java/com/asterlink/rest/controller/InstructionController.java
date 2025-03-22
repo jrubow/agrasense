@@ -38,13 +38,13 @@ public class InstructionController {
 
     // Send instructions by sentinelId.
     @GetMapping("/get/sentinel/{sentinelId}")
-    public List<Instruction> getInstructionsBySentinelId(@PathVariable("sentinelId") int sentinelId) {
+    public List<Instruction> getInstructionsBySentinelId(@PathVariable("sentinelId") long sentinelId) {
         return instructionService.getInstructionsBySentinelId(sentinelId);
     }
 
     // Send instructions by deviceId.
     @GetMapping("/get/device/{deviceId}")
-    public List<Instruction> getInstructionsByDeviceId(@PathVariable("deviceId") int deviceId) {
+    public List<Instruction> getInstructionsByDeviceId(@PathVariable("deviceId") long deviceId) {
         return instructionService.getInstructionsByDeviceId(deviceId);
     }
 
