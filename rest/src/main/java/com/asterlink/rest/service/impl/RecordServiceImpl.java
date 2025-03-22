@@ -1,5 +1,6 @@
 package com.asterlink.rest.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.asterlink.rest.model.Record;
@@ -24,6 +25,8 @@ public class RecordServiceImpl implements RecordService {
     public boolean createRecord(Record record) {
         try {
             record.setRecordId(getNextRecordId());
+            LocalDateTime now = LocalDateTime.now();
+            record.setTimestamp(now);
             recordRepository.save(record);
             return true;
         } catch (Exception e) {

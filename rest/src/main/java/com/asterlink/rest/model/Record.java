@@ -38,6 +38,18 @@ public class Record {
     @JsonCreator
     public Record(
             @JsonProperty("device_id") int deviceId,
+            @JsonProperty("type") int type,
+            @JsonProperty("value") float value) {
+        this.deviceId = deviceId;
+        this.type = type;
+        this.value = value;
+    }
+
+    /*
+    // JSON parsing.
+    @JsonCreator
+    public Record(
+            @JsonProperty("device_id") int deviceId,
             @JsonProperty("timestamp") LocalDateTime timestamp,
             @JsonProperty("type") int type,
             @JsonProperty("value") float value) {
@@ -46,6 +58,7 @@ public class Record {
         this.type = type;
         this.value = value;
     }
+    */
 
     // Getters and Setters.
     public int getRecordId() { return recordId; }
