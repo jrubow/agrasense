@@ -17,4 +17,5 @@ public interface RelayDeviceService {
     List<RelayDevice> getAllRelayDevices();
     List<RelayDevice> getRelayDevicesBySentinelId(long sentinelId);
     boolean registerRelayDevice(RelayDevice device);
+    String claimRelayDevice(long deviceId, String password, int clientId);
 }

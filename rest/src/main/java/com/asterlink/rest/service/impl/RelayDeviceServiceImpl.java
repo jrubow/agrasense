@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.asterlink.rest.model.SentinelDevice;
 import org.springframework.stereotype.Service;
 import com.asterlink.rest.model.RelayDevice;
 import com.asterlink.rest.repository.RelayDeviceRepository;
@@ -110,5 +112,26 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
     @Override
     public boolean registerRelayDevice(RelayDevice device) {
         return false;
+    }
+
+    @Override
+    public String claimRelayDevice(long deviceId, String password, int clientId) {
+        System.out.println(clientId);
+        RelayDevice device = relayDeviceRepository.findById(deviceId).orElse(null);
+        if (device == null || device.getPassword() == null) {
+            return "DEVICE DOES NOT EXIST";
+        } else if (device.getClientId() != 0) {
+            return "DEVICE IS ALREADY REGISTERED";
+        } else if (!device.getPassword().equals(password)) {
+            return "INCORRECT DEVICE PASSWORD";
+        }
+        device.setClientId(clientId);
+        try {
+            relayDeviceRepository.save(device);
+            return "ok " + device.getDeviceId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "INTERNAL SERVER ERROR";
+        }
     }
 }

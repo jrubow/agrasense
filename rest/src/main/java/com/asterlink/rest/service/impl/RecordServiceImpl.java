@@ -82,6 +82,12 @@ public class RecordServiceImpl implements RecordService {
         return recordRepository.findRecordsByDeviceId(deviceId);
     }
 
+    // Get last n records for a device.
+    @Override
+    public List<Record> getNRecordsByDevice(long deviceId, int n) {
+        return recordRepository.findLastNRecordsByDeviceId(deviceId, n);
+    }
+
     // Get next ID number for a new record.
     public int getNextRecordId() {
         Integer maxId = recordRepository.findMaxRecordId();

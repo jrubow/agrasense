@@ -16,6 +16,7 @@ public interface RecordService {
     public Record getRecord(int recordId);
     public List<Record> getAllRecords();
     public List<Record> getRecordsByDevice(long deviceId);
+    public List<Record> getNRecordsByDevice(long deviceId, int n);
     public void createBatchRecord(List<Record> records);
     List<RecordAverageDTO> getAveragesByTypeAndInterval(int type, LocalDateTime start, LocalDateTime end, int interval);
 

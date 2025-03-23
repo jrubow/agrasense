@@ -37,6 +37,12 @@ public class RecordController {
         return recordService.getAllRecords();
     }
 
+    // Get last n records from the table for a specific devices
+    @GetMapping("/recent")
+    public List<Record> getDeviceLastNRecords(@RequestParam("device_id") long deviceId, @RequestParam("n") int n) {
+        return recordService.getNRecordsByDevice(deviceId, n);
+    }
+
     // Add new record.
     @PostMapping
     public String createRecord(@RequestBody Record record) {

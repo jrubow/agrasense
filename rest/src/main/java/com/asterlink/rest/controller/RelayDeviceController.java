@@ -68,4 +68,21 @@ public class RelayDeviceController {
             return ResponseEntity.ok(device);
         }
     }
+
+    @PostMapping("/claim")
+    public ResponseEntity<String> claimSentinelDevice(
+            @RequestParam("device_id") long deviceId,
+            @RequestParam("password") String password,
+            @RequestParam("client_id") int clientId) {
+        String claimRes = "";
+        try {
+            claimRes = relayDeviceService.claimRelayDevice(deviceId, password, clientId);
+            System.out.println(claimRes);
+            return claimRes.equals("ok " + deviceId) ?
+                    ResponseEntity.ok("RELAY DEVICE " + deviceId + " CLAIMED") :
+                    ResponseEntity.status(400).body(claimRes);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(claimRes);
+        }
+    }
 }

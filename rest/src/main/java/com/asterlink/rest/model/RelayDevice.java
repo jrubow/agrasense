@@ -27,6 +27,10 @@ public class RelayDevice extends Device {
     @JsonProperty("password")
     private String password;
 
+    @Column(name = "client_id")
+    @JsonProperty("client_id")
+    private int clientId;
+
     // Default Constructor
     public RelayDevice() {};
 
@@ -69,4 +73,6 @@ public class RelayDevice extends Device {
     public void setSentinelConnection(boolean sentinelConnection) { this.sentinelConnection = sentinelConnection; }
     public String getPassword() { return this.password; }
     public void setPassword(String password) { this.password = password; }
+    public int getClientId() { return this.clientId; }
+    public void setClientId(int clientId) { this.clientId = clientId; }
 }
