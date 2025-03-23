@@ -1,9 +1,12 @@
 package com.asterlink.rest.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.asterlink.rest.model.RecordAverageDTO;
+import com.asterlink.rest.repository.RelayDeviceRepository;
+import com.asterlink.rest.repository.SentinelDeviceRepository;
 import org.springframework.stereotype.Service;
 import com.asterlink.rest.model.Record;
 import com.asterlink.rest.repository.RecordRepository;
@@ -18,8 +21,13 @@ import com.asterlink.rest.service.RecordService;
 public class RecordServiceImpl implements RecordService {
     // Set up repository access.
     private final RecordRepository recordRepository;
-    public RecordServiceImpl(RecordRepository r) {
+    private final RelayDeviceRepository relayDeviceRepository;
+    private final SentinelDeviceRepository sentinelDeviceRepository;
+
+    public RecordServiceImpl(RecordRepository r, RelayDeviceRepository rd, SentinelDeviceRepository sentinelDeviceRepository) {
         this.recordRepository = r;
+        this.relayDeviceRepository = rd;
+        this.sentinelDeviceRepository = sentinelDeviceRepository;
     }
 
     // Enter record into the table.
@@ -30,6 +38,8 @@ public class RecordServiceImpl implements RecordService {
             LocalDateTime now = LocalDateTime.now();
             record.setTimestamp(now);
             recordRepository.save(record);
+            relayDeviceRepository.updateLastOnline(record.getDeviceId(), now);
+            sentinelDeviceRepository.updateLastOnline(relayDeviceRepository.findSentinelIdByDeviceId(record.getDeviceId()), now);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
