@@ -53,7 +53,7 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
             throw new IllegalArgumentException("device_id is required for updating user details.");
         }
 
-        // Find the Devic by id
+        // Find the device by id
         RelayDevice device = (RelayDevice) relayDeviceRepository.findById(id).orElse(null);
         if (device == null) {
             return "DEVICE_ID: " + id + " IS NOT FOUND";

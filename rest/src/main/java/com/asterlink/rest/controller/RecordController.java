@@ -1,10 +1,12 @@
 package com.asterlink.rest.controller;
 
-import com.asterlink.rest.model.RecordAverage;
 import com.asterlink.rest.model.Record;
+import com.asterlink.rest.model.RecordAverageDTO;
 import com.asterlink.rest.service.RecordService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -49,10 +51,15 @@ public class RecordController {
         return "Records created.";
     }
 
-    /*
-    @GetMapping("/averages/{deviceId}")
-    public List<RecordAverage> getLastDeviceAverages(@PathVariable int deviceId) {
-        return recordService.getLastDeviceAverages(deviceId);
+    // Get the averages for a specific record type for a specific timeframe.
+    @GetMapping("/average")
+    public List<RecordAverageDTO> getAverages(
+            @RequestParam int type,
+            @RequestParam("start_timestamp") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam("end_timestamp") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
+            @RequestParam int interval
+    ) {
+        return recordService.getAveragesByTypeAndInterval(type, start, end, interval);
     }
-     */
+
 }

@@ -1,6 +1,8 @@
 package com.asterlink.rest.model;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
@@ -15,21 +17,36 @@ import jakarta.persistence.Id;
 public abstract class Device {
 
     @Id
-    @Column(name="device_id")
+    @Column(name = "device_id")
+    @JsonProperty("device_id")  // Enforce consistent JSON field name
     private long deviceId;
-    @Column(name="latitude")
+
+    @Column(name = "latitude")
+    @JsonProperty("latitude")
     private double latitude;
-    @Column(name="longitude")
+
+    @Column(name = "longitude")
+    @JsonProperty("longitude")
     private double longitude;
-    @Column(name="battery_life")
+
+    @Column(name = "battery_life")
+    @JsonProperty("battery_life")
     private double batteryLife;
-    @Column(name="last_online")
+
+    @Column(name = "last_online")
+    @JsonProperty("last_online")
     private LocalDateTime lastOnline;
-    @Column(name="deployed")
+
+    @Column(name = "deployed")
+    @JsonProperty("deployed")
     private boolean deployed;
-    @Column(name="deployed_date")
+
+    @Column(name = "deployed_date")
+    @JsonProperty("deployed_date")
     private LocalDateTime deployedDate;
-    @Column(name="is_connected")
+
+    @Column(name = "is_connected")
+    @JsonProperty("is_connected")
     private boolean isConnected;
 
     // Default constructor
@@ -45,6 +62,7 @@ public abstract class Device {
         this.lastOnline = lastOnline;
         this.deployed = deployed;
         this.deployedDate = deployedDate;
+        this.isConnected = false;
     }
 
     // Short constructor

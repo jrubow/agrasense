@@ -17,17 +17,28 @@ import jakarta.persistence.Table;
 public class Instruction {
 
     @Id
-    @Column(name="instruction_id")
+    @Column(name = "instruction_id")
+    @JsonProperty("instruction_id")
     private int instructionId;
-    @Column(name="sentinel_id")
+
+    @Column(name = "sentinel_id")
+    @JsonProperty("sentinel_id")
     private long sentinelId;
-    @Column(name="device_id")
+
+    @Column(name = "device_id")
+    @JsonProperty("device_id")
     private long deviceId;
-    @Column(name="instruction_type")
+
+    @Column(name = "instruction_type")
+    @JsonProperty("instruction_type")
     private int instructionType;
-    @Column(name="status")
+
+    @Column(name = "status")
+    @JsonProperty("status")
     private int status;
-    @Column(name="error_id")
+
+    @Column(name = "error_id")
+    @JsonProperty("error_id")
     private int errorId;
 
     // Default empty constructor.

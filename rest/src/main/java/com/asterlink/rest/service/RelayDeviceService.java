@@ -12,8 +12,8 @@ public interface RelayDeviceService {
     boolean createRelayDevice(RelayDevice device);
     boolean createRelayDeviceBatch(List<RelayDevice> devices);
     String updateRelayDevice(Map<String, Object> updates);
-    String deleteRelayDevice(long relay_id);
-    RelayDevice getRelayDevice(long Relay_id);
+    String deleteRelayDevice(long relayId);
+    RelayDevice getRelayDevice(long relayId);
     List<RelayDevice> getAllRelayDevices();
     List<RelayDevice> getRelayDevicesBySentinelId(long sentinelId);
     boolean registerRelayDevice(RelayDevice device);

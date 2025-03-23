@@ -14,11 +14,17 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "relay_devices")
 public class RelayDevice extends Device {
-    @Column(name="sentinel_id")
+
+    @Column(name = "sentinel_id")
+    @JsonProperty("sentinel_id")
     private long sentinelId;
-    @Column(name="sentinel_connection")
+
+    @Column(name = "sentinel_connection")
+    @JsonProperty("sentinel_connection")
     private boolean sentinelConnection;
-    @Column(name="password")
+
+    @Column(name = "password")
+    @JsonProperty("password")
     private String password;
 
     // Default Constructor

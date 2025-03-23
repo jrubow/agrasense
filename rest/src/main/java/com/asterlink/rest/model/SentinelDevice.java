@@ -21,11 +21,16 @@ import jakarta.persistence.Column;
 public class SentinelDevice extends Device {
 
     // Additional fields specific to SentinelDevice
-    @Column(name="num_connected_devices")
+    @Column(name = "num_connected_devices")
+    @JsonProperty("num_connected_devices")
     private int numConnectedDevices;
-    @Column(name="client_id")
+
+    @Column(name = "client_id")
+    @JsonProperty("client_id")
     private int clientId;
-    @Column(name="password")
+
+    @Column(name = "password")
+    @JsonProperty("password")
     private String password;
 
     // Default constructor

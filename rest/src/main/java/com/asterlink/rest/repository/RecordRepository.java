@@ -1,11 +1,11 @@
 package com.asterlink.rest.repository;
 
 import com.asterlink.rest.model.Record;
-import com.asterlink.rest.model.RecordAverage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,4 +20,21 @@ public interface RecordRepository extends JpaRepository<Record, Integer> {
 
     @Query("SELECT r FROM Record r WHERE r.deviceId = :deviceId")
     List<Record> findRecordsByDeviceId(long deviceId);
+
+    @Query(value = """
+        SELECT 
+            FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(r.timestamp) / (:interval * 60)) * (:interval * 60)) AS time_group,
+            AVG(r.value) AS avg_value
+        FROM records r
+        WHERE r.type = :type 
+          AND r.timestamp BETWEEN :start AND :end
+        GROUP BY time_group
+        ORDER BY time_group
+    """, nativeQuery = true)
+    List<Object[]> findAveragesByTypeAndInterval(
+            @Param("type") int type,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("interval") int interval
+    );
 }

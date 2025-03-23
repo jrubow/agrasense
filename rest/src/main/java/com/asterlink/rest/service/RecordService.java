@@ -1,8 +1,9 @@
 package com.asterlink.rest.service;
 
 import com.asterlink.rest.model.Record;
-import com.asterlink.rest.model.RecordAverage;
+import com.asterlink.rest.model.RecordAverageDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -16,4 +17,6 @@ public interface RecordService {
     public List<Record> getAllRecords();
     public List<Record> getRecordsByDevice(long deviceId);
     public void createBatchRecord(List<Record> records);
+    List<RecordAverageDTO> getAveragesByTypeAndInterval(int type, LocalDateTime start, LocalDateTime end, int interval);
+
 }

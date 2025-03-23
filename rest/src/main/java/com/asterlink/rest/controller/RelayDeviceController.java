@@ -47,13 +47,25 @@ public class RelayDeviceController {
         }
     }
 
-    @GetMapping("/{sentinelId}")
+    // Get all relay devices by sentinelId.
+    @GetMapping("/network/{sentinelId}")
     public ResponseEntity<List<RelayDevice>> getRelayDevicesBySentielId(@PathVariable long sentinelId) {
         List<RelayDevice> devices = relayDeviceService.getRelayDevicesBySentinelId(sentinelId);
         if (devices == null || devices.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else {
             return ResponseEntity.ok(devices);
+        }
+    }
+
+    // Get relay device by its deviceId.
+    @GetMapping("/get/{deviceId}")
+    public ResponseEntity<RelayDevice> getRelayDeviceById(@PathVariable long deviceId) {
+        RelayDevice device = relayDeviceService.getRelayDevice(deviceId);
+        if (device == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(device);
         }
     }
 }

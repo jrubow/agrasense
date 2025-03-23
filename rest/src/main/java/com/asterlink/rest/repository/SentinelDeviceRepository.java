@@ -13,13 +13,6 @@ import java.util.List;
 
 public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, Long> {
 
-    // @Modifying
-    // @Transactional
-    // @Query("UPDATE User u SET u.login_attempts = 0 WHERE u.username = :username")
-    // void resetLoginAttempts(String username);
-
-    // @Query("SELECT u.login_attempts FROM User u WHERE u.username = :username")
-    // int getLoginAttempts(String username);
     List<SentinelDevice> findByClientId(int clientId);
 
     @Query("SELECT MAX(r.deviceId) FROM SentinelDevice r")

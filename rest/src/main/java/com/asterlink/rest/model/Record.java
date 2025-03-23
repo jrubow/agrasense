@@ -20,15 +20,24 @@ import java.time.LocalDateTime;
 public class Record {
 
     @Id
-    @Column(name="record_id")
+    @Column(name = "record_id")
+    @JsonProperty("record_id") // Enforce consistent JSON field name
     private int recordId;
-    @Column(name="device_id")
+
+    @Column(name = "device_id")
+    @JsonProperty("device_id")
     private long deviceId;
-    @Column(name="timestamp")
+
+    @Column(name = "timestamp")
+    @JsonProperty("timestamp")
     private LocalDateTime timestamp;
-    @Column(name="type")
+
+    @Column(name = "type")
+    @JsonProperty("type")
     private int type;
-    @Column(name="value")
+
+    @Column(name = "value")
+    @JsonProperty("value")
     private float value;
 
     // Default empty constructor.
@@ -44,21 +53,6 @@ public class Record {
         this.type = type;
         this.value = value;
     }
-
-    /*
-    // JSON parsing.
-    @JsonCreator
-    public Record(
-            @JsonProperty("device_id") int deviceId,
-            @JsonProperty("timestamp") LocalDateTime timestamp,
-            @JsonProperty("type") int type,
-            @JsonProperty("value") float value) {
-        this.deviceId = deviceId;
-        this.timestamp = timestamp;
-        this.type = type;
-        this.value = value;
-    }
-    */
 
     // Getters and Setters.
     public int getRecordId() { return recordId; }

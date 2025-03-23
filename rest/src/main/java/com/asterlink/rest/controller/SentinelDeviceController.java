@@ -1,5 +1,6 @@
 package com.asterlink.rest.controller;
 
+import com.asterlink.rest.model.RelayDevice;
 import com.asterlink.rest.model.SentinelDevice;
 import com.asterlink.rest.service.SentinelDeviceService;
 
@@ -82,6 +83,17 @@ public class SentinelDeviceController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else {
             return ResponseEntity.ok(devices);
+        }
+    }
+
+    // Get sentinel device by its deviceId.
+    @GetMapping("/get/{deviceId}")
+    public ResponseEntity<SentinelDevice> getSentinelDeviceById(@PathVariable long deviceId) {
+        SentinelDevice device = sentinelDeviceService.getSentinelDevice(deviceId);
+        if (device == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(device);
         }
     }
 }

@@ -2,6 +2,8 @@ package com.asterlink.rest.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.asterlink.rest.model.RecordAverageDTO;
 import org.springframework.stereotype.Service;
 import com.asterlink.rest.model.Record;
 import com.asterlink.rest.repository.RecordRepository;
@@ -41,6 +43,15 @@ public class RecordServiceImpl implements RecordService {
         for (Record r : records) {
             createRecord(r);
         }
+    }
+
+    // Get records averages by type, timeframe, and intervals.
+    @Override
+    public List<RecordAverageDTO> getAveragesByTypeAndInterval(int type, LocalDateTime start, LocalDateTime end, int interval) {
+        return recordRepository.findAveragesByTypeAndInterval(type, start, end, interval)
+                .stream()
+                .map(RecordAverageDTO::from)
+                .toList();
     }
 
     // Get record by its ID.
