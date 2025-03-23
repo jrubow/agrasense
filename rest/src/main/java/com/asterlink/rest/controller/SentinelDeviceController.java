@@ -75,10 +75,13 @@ public class SentinelDeviceController {
         }
     }
 
-    /*
-    @GetMapping()
-    public List<SentinelDevice> getAllUserDetails(String username) {
-        return sentinelDeviceService.getAllSentinelDevices();
+    @GetMapping("/all")
+    public ResponseEntity<List<SentinelDevice>> getAllSentinelDevices() {
+        List<SentinelDevice> devices = sentinelDeviceService.getAllSentinelDevices();
+        if (devices == null || devices.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(devices);
+        }
     }
-     */
 }

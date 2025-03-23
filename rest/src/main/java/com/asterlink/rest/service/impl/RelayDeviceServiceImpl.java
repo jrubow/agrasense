@@ -103,6 +103,11 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
     }
 
     @Override
+    public List<RelayDevice> getRelayDevicesBySentinelId(long sentinelId) {
+        return relayDeviceRepository.findBySentinelId(sentinelId);
+    }
+
+    @Override
     public boolean registerRelayDevice(RelayDevice device) {
         return false;
     }

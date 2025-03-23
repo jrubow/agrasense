@@ -15,5 +15,6 @@ public interface RelayDeviceService {
     String deleteRelayDevice(long relay_id);
     RelayDevice getRelayDevice(long Relay_id);
     List<RelayDevice> getAllRelayDevices();
+    List<RelayDevice> getRelayDevicesBySentinelId(long sentinelId);
     boolean registerRelayDevice(RelayDevice device);
 }

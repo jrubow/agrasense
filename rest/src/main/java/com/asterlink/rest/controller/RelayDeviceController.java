@@ -2,11 +2,9 @@ package com.asterlink.rest.controller;
 
 import com.asterlink.rest.model.RelayDevice;
 import com.asterlink.rest.service.RelayDeviceService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,4 +36,24 @@ public class RelayDeviceController {
         return isCreated ? ResponseEntity.ok("SENTINEL DEVICES REGISTERED") : ResponseEntity.status(400).body("ERROR REGISTERING DEVICES");
     }
 
+    // Get all relay devices.
+    @GetMapping("/all")
+    public ResponseEntity<List<RelayDevice>> getRelayDevices() {
+        List<RelayDevice> devices = relayDeviceService.getAllRelayDevices();
+        if (devices == null || devices.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(devices);
+        }
+    }
+
+    @GetMapping("/{sentinelId}")
+    public ResponseEntity<List<RelayDevice>> getRelayDevicesBySentielId(@PathVariable long sentinelId) {
+        List<RelayDevice> devices = relayDeviceService.getRelayDevicesBySentinelId(sentinelId);
+        if (devices == null || devices.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(devices);
+        }
+    }
 }

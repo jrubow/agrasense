@@ -2,6 +2,9 @@ package com.asterlink.rest.repository;
 
 import com.asterlink.rest.model.RelayDevice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 /**
  * Interface for Relay repository
@@ -9,11 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 
 public interface RelayDeviceRepository extends JpaRepository<RelayDevice, Long> {
-    // @Modifying
-    // @Transactional
-    // @Query("UPDATE User u SET u.login_attempts = 0 WHERE u.username = :username")
-    // void resetLoginAttempts(String username);
 
-    // @Query("SELECT u.login_attempts FROM User u WHERE u.username = :username")
-    // int getLoginAttempts(String username);
+    @Query("SELECT r FROM RelayDevice r WHERE r.sentinelId = :sentinelId")
+    List<RelayDevice> findBySentinelId(long sentinelId);
 }
