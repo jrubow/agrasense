@@ -24,7 +24,7 @@ public class RelayDevice extends Device {
     // Default Constructor
     public RelayDevice() {};
 
-    // Main Constructor
+    // Main Constructor 
     @JsonCreator
     public RelayDevice(
             @JsonProperty("device_id") long deviceId,
