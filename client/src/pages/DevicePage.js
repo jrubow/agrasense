@@ -12,6 +12,7 @@ const DevicePage = () => {
   const [relayDevices, setRelayDevices] = useState([])
   const [device, setDevice] = useState(null)
   const [tempN, setTempN] = useState([])
+  const [lastOnlineDifferential, setLastOnlineDifferential ] = useState(0)
   const navigate = useNavigate()
 
   const layout = {
@@ -27,54 +28,68 @@ const DevicePage = () => {
       t: 20,
       r: 20,
       b: 80,
-      l: 20,
+      l: 40,
     },
   };
 
 
-  useEffect(() => {
-    async function getDevice() {
-        if (sentinel === '1') {
-            try {
-                const relayResponse = await axios.get(`/api/devices/relay/network/${deviceId}`)
-                setRelayDevices(relayResponse.data);
-                const deviceResponse = await axios.get(`/api/devices/sentinel/get/${deviceId}`)
-                console.log(deviceResponse.data)
-                setDevice(deviceResponse.data)
-            } catch (error) {
-                console.error("Error getting relay devices:", error)
+    useEffect(() => {
+        async function getDevice() {
+            if (device) {
+                setLastOnlineDifferential(new Date() - new Date(device.last_online));
             }
-            
-        } else {
-            try {
-                const response = await axios.get(`/api/devices/relay/get/${deviceId}`)
-                setDevice(response.data);
-            } catch (error) {
-                console.error("Error getting relay devices:", error)
+
+            if (sentinel === '1') {
+                try {
+                    const relayResponse = await axios.get(`/api/devices/relay/network/${deviceId}`)
+                    setRelayDevices(relayResponse.data);
+                    const deviceResponse = await axios.get(`/api/devices/sentinel/get/${deviceId}`)
+                    console.log(deviceResponse.data)
+                    setDevice(deviceResponse.data)
+                } catch (error) {
+                    console.error("Error getting relay devices:", error)
+                }
+                
+            } else {
+                try {
+                    const response = await axios.get(`/api/devices/relay/get/${deviceId}`)
+                    setDevice(response.data);
+                } catch (error) {
+                    console.error("Error getting relay devices:", error)
+                }
             }
         }
-    }
 
-    async function getNRecords() {
-        try {
-            const response = await axios.get(`/api/record/recent?device_id=${deviceId}&n=25`)
-            setTempN(response.data)
-            console.log(response.data)
+        async function getNRecords() {
+            try {
+                const response = await axios.get(`/api/record/recent?device_id=${deviceId}&n=25`)
+                setTempN(response.data)
+                console.log(response.data)
 
-        } catch (error) {
-            console.error("Error getting n records", error)
+            } catch (error) {
+                console.error("Error getting n records", error)
+            }
         }
-    }
 
-    getDevice()
-    getNRecords()
-  }, [sentinel, deviceId])
+        getDevice()
+        getNRecords()
+    }, [sentinel, deviceId])
+
+    useEffect(() => {
+        if (device && device.last_online != null) {
+            setLastOnlineDifferential(new Date() - new Date(device.last_online));
+        }
+    }, [device]);
 
   return (
     <div className="devicepage-top-container">
         <div className="devicepage-info-container">
-            {device != null ? <div className="devicepage-container">
-                <h1> {sentinel === "1" ? "Sentinel " : "Relay "}Device Details</h1>
+            {device != null ? <div className="devicepage-container" >
+                <div className="devicepage-header">
+                    <div className="online-status-bubble" style={lastOnlineDifferential > 120000 || lastOnlineDifferential == 0 ? {backgroundColor:"red"} : {backgroundColor:"green"}}></div>
+                    <h1>{sentinel === "1" ? "Sentinel " : "Relay "}Device Details</h1>
+                </div>
+                { lastOnlineDifferential > 120000 && lastOnlineDifferential != 0 ? <h3 style={{color:"red"}}>Device has not reported for {Math.round(lastOnlineDifferential / 60000) } minutes</h3> : ""}
                 <div className="device-info">
                     <p><strong>Device ID:</strong> {device.device_id}</p>
                     <p><strong>Battery Life:</strong> {device.battery_life}</p>

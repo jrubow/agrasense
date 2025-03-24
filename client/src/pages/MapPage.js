@@ -1,6 +1,7 @@
 // MapPage.js
 import React, { useState, useCallback } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import "../css/pages/mappage.css"
 
 const MapPage = () => {
   const [map, setMap] = useState(null);
@@ -8,7 +9,7 @@ const MapPage = () => {
   // Google Maps container style
   const containerStyle = {
     width: '100%',
-    height: '400px',
+    height: '100%',
   };
 
   // Coordinates for the center of the map
@@ -30,9 +31,8 @@ const MapPage = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Map Page</h1>
-      <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+    <div className="map-container">
+      <LoadScript googleMapsApiKey={process.env.TESTKEY}>
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}
