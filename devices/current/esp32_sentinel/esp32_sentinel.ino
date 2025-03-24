@@ -14,10 +14,6 @@ const char* externalSSID = "test1234";
 const char* externalPassword = "password123";
 
 // API endpoints
-// const char* batchApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/reports/batch";
-// const char* initApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/sentinel/initialize";
-// const char* initRelayApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/relay/initialize/batch";
-
 const char* batchApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/record/batch";
 const char* initApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/devices/sentinel/initialize";
 const char* initRelayApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/devices/relay/initialize/batch";
@@ -82,33 +78,35 @@ void processReceivedData(const String& msg) {
 
     uint64_t instructionType = jsonDoc["instruction_type"];
     if (instructionType == SEND_SENSOR_DATA) {// Read sensor data fields from the incoming message
-      uint64_t sensorDeviceId = jsonDoc["device_id"];
-      float temperature = jsonDoc["temperature"];
-      float humidity = jsonDoc["humidity"];
-      int light_level = jsonDoc["light_level"];
-      int soil_moisture = jsonDoc["soil_moisture"];
+        uint64_t sensorDeviceId = jsonDoc["device_id"];
+        float temperature = jsonDoc["temperature"];
+        float humidity = jsonDoc["humidity"];
+        int light_level = jsonDoc["light_level"];
+        int soil_moisture = jsonDoc["soil_moisture"];
 
-      Serial.println("\n--- Sensor Data Received ---");
-      Serial.printf("Sensor Device ID: %u\n", sensorDeviceId);
-      Serial.printf("Temperature: %.2f°C\n", temperature);
-      Serial.printf("Humidity: %.2f%%\n", humidity);
-      Serial.printf("Light Level: %d%%\n", light_level);
-      Serial.printf("Soil Moisture: %d%%\n", soil_moisture);
-      Serial.println("----------------------------");
-      
+        Serial.println("\n--- Sensor Data Received ---");
+        Serial.printf("Sensor Device ID: %u\n", sensorDeviceId);
+        Serial.printf("Temperature: %.2f°C\n", temperature);
+        Serial.printf("Humidity: %.2f%%\n", humidity);
+        Serial.printf("Light Level: %d%%\n", light_level);
+        Serial.printf("Soil Moisture: %d%%\n", soil_moisture);
+        Serial.println("----------------------------");
+        
 
-      // Create JSON report for temperature reading in the new batch format
-      StaticJsonDocument<256> pushDoc;
-      // Use the registered device id (if set) instead of the sensor's device id.
-      pushDoc["device_id"] = sensorDeviceId;
-      pushDoc["type"] = TEMPERATURE;
-      pushDoc["value"] = temperature;
-      // pushDoc["units"] = "Fahrenheit";
+        // Format JSON Temperature data
+        StaticJsonDocument<256> pushDoc;
+        pushDoc["device_id"] = sensorDeviceId;
+        pushDoc["type"] = TEMPERATURE;
+        pushDoc["value"] = temperature;
+        String pushPayload;
+        serializeJson(pushDoc, pushPayload);
+        dataBuffer.push_back(pushPayload);
 
-      String pushPayload;
-      serializeJson(pushDoc, pushPayload);
-
-      dataBuffer.push_back(pushPayload);
+        // Format JSON Humidity data
+        serializeJson(pushDoc, pushPayload);
+        pushDoc["type"] = HUMIDITY;
+        pushDoc["value"] = humidity;
+        dataBuffer.push_back(pushPayload)
     } else if (instructionType == CONFIGURE_DEVICE_ID) {
       Serial.printf("Received CONFIGURE_DEVICE_ID : %d\n", jsonDoc["device_id"]);
       jsonDoc.remove("instruction_type");
@@ -174,38 +172,38 @@ void sendDataToAPI() {
     }
 
     if (!initBuffer.empty()) {
-      http.begin(initRelayApiEndpoint);
-      http.addHeader("X-API-KEY", "user");
-      http.addHeader("Content-Type", "application/json");
+        http.begin(initRelayApiEndpoint);
+        http.addHeader("X-API-KEY", "user");
+        http.addHeader("Content-Type", "application/json");
 
-      batchJson.clear();
-      jsonArray = batchJson.to<JsonArray>();
-      for (const auto& entry : initBuffer) {
-          StaticJsonDocument<256> tempDoc;
-          deserializeJson(tempDoc, entry);
-          tempDoc["sentinel_id"] = sentinelId;
-          jsonArray.add(tempDoc);
-      }
+        batchJson.clear();
+        jsonArray = batchJson.to<JsonArray>();
+        for (const auto& entry : initBuffer) {
+            StaticJsonDocument<256> tempDoc;
+            deserializeJson(tempDoc, entry);
+            tempDoc["sentinel_id"] = sentinelId;
+            jsonArray.add(tempDoc);
+        }
 
-      serializeJson(batchJson, batchPayload);
-      Serial.println("Batch Payload:");
-      Serial.println(batchPayload);
+        serializeJson(batchJson, batchPayload);
+        Serial.println("Batch Payload:");
+        Serial.println(batchPayload);
 
-      int httpResponseCode = http.POST(batchPayload);
-      Serial.printf("HTTP Response Code: %d\n", httpResponseCode);
+        int httpResponseCode = http.POST(batchPayload);
+        Serial.printf("HTTP Response Code: %d\n", httpResponseCode);
 
-      if (httpResponseCode > 0) {
-          Serial.println("Data sent successfully!");
-          dataBuffer.clear();
-      } else {
-          Serial.println("Failed to send data.");
-      }
+        if (httpResponseCode > 0) {
+            Serial.println("Data sent successfully!");
+            dataBuffer.clear();
+        } else {
+            Serial.println("Failed to send data.");
+        }
 
-      http.end();
-      WiFi.disconnect(true);
-      Serial.println("Disconnected from WiFi.");
+        http.end();
+        WiFi.disconnect(true);
+        Serial.println("Disconnected from WiFi.");
     } else {
-      Serial.printf("No devices to init\n");
+        Serial.printf("No devices to init\n");
     }
 
     initBuffer.clear();

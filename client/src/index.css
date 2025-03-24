@@ -6,18 +6,22 @@
     margin-bottom:60px;
 }
 
-.html {
+html {
     height:100vh;
 }
 
-.body {
-    height:100vh;
+body {
+    height:100%;
 }
 
 .online-status-bubble {
     height: 30px;
     width: 30px;
     border-radius: 15px;    
+}
+
+#root {
+    height:100%;
 }
 
 h3 {

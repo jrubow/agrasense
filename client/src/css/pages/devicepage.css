@@ -1,4 +1,9 @@
 /* Center content and maintain a minimal black and white look */
+
+* {
+  box-sizing: border-box;
+}
+
 .devicepage-container {
     width: 100%;
     margin: 0;
