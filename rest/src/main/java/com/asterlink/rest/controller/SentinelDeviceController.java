@@ -96,4 +96,21 @@ public class SentinelDeviceController {
             return ResponseEntity.ok(device);
         }
     }
+
+    // Update location with specified parameters
+    @PostMapping("/update/loc")
+    public ResponseEntity<String> updateDeviceLocation(
+            @RequestParam("device_id") long deviceId,
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude) {
+        String claimRes = "";
+        try {
+            if (sentinelDeviceService.updateLocation(deviceId, latitude, longitude)) {
+                return ResponseEntity.ok("LOCATION OF " + deviceId + " UPDATED");
+            }
+            return ResponseEntity.status(400).body("ERROR UPDATING LOCATION");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(claimRes);
+        }
+    }
 }
