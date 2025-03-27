@@ -8,7 +8,6 @@ import MapPage from "./pages/MapPage"
 
 function App() {
   return (
-    <div className="navbar-margin">
       <BrowserRouter >
         <NavBar/>
           <Routes>
@@ -18,7 +17,6 @@ function App() {
             <Route path="/map" element={<MapPage/>}/>
           </Routes>
       </BrowserRouter>
-    </div>
   )
 }
 

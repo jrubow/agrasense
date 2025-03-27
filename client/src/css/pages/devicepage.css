@@ -1,4 +1,9 @@
 /* Center content and maintain a minimal black and white look */
+
+* {
+  box-sizing: border-box;
+}
+
 .devicepage-container {
     width: 100%;
     margin: 0;
@@ -26,5 +31,10 @@
   .devicepage-top-container {
     display:flex;
     flex-direction:column;
+    align-items: center;
+  }
+
+  .devicepage-header {
+    display:flex;
     align-items: center;
   }

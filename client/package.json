@@ -2,17 +2,17 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net",
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
-    "axios": "^1.7.9",
+    "axios": "^1.8.4",
     "plotly.js": "^3.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-plotly.js": "^2.6.0",
-    "react-router-dom": "^6.29.0",
-    "react-scripts": "4.0.3"
+    "react-router-dom": "^7.4.0",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
