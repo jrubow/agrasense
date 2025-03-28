@@ -53,8 +53,9 @@ const Homepage = () => {
 
     async function getAverages() {
       try {
-        const currentUTC = new Date().toISOString();
-        const tempResponse = await axios.get(`/api/record/average?type=1&start_timestamp=2025-03-23T01:01:00&end_timestamp=${currentUTC}&interval=2`)
+        const currentUTC = new Date().toISOString(); // Current time in UTC
+        const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(); // 12 hours ago
+        const tempResponse = await axios.get(`/api/record/average?type=1&start_timestamp=${twelveHoursAgo}&end_timestamp=${currentUTC}&interval=2`);
         console.log(tempResponse.data)
         setTempAverage(tempResponse.data)
       } catch (error ) {
