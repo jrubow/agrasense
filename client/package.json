@@ -2,7 +2,8 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
+  "proxy": "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net",
+  "homepage": "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net",
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
     "axios": "^1.8.4",
