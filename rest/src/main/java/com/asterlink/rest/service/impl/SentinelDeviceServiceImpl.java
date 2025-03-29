@@ -149,4 +149,14 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
         sentinelDeviceRepository.updateLocation(deviceId, latitude, longitude);
         return true;
     }
+
+    @Override
+    public boolean updateBattery(long deviceId, double battery) {
+        SentinelDevice s = sentinelDeviceRepository.findById(deviceId).orElse(null);
+        if (s == null) {
+            return false;
+        }
+        sentinelDeviceRepository.updateBattery(deviceId, battery);
+        return true;
+    }
 }

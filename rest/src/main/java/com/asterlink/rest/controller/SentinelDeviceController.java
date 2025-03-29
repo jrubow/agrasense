@@ -113,4 +113,19 @@ public class SentinelDeviceController {
             return ResponseEntity.status(400).body(claimRes);
         }
     }
+
+    @PostMapping("/update/battery")
+    public ResponseEntity<String> updateDeviceLocation(
+            @RequestParam("device_id") long deviceId,
+            @RequestParam("battery") double battery) {
+        String claimRes = "";
+        try {
+            if (sentinelDeviceService.updateBattery(deviceId, battery)) {
+                return ResponseEntity.ok("BATTERY OF " + deviceId + " UPDATED");
+            }
+            return ResponseEntity.status(400).body("ERROR UPDATING BATTERY");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(claimRes);
+        }
+    }
 }
