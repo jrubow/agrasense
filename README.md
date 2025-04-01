@@ -22,7 +22,7 @@ The sensor mesh will serve to communicate information between all sensor devices
 Users will be able to communicate instructions to the devices via an intuitive web dashboard. Also, users will be able to view real time sensor data as well as view and download old data for analysis from the dashboard. Importantly the dashboard will 
 
 ## Deployment Aides
-Users will have access to multiple deployment aides. When deciding where to deploy devices users will be able to use a machine learning model which will accurately predict the optimal placement of the devices in the field, for the strongest connectivity and sensor readings. Users can choose the radius for each device with the maximum value around 220 ft. This can also be modified to fit each field’s specifications.
+Users will have access to multiple deployment aides. When deciding where to deploy devices users will be able to use a machine learning model which will accurately predict the optimal placement of the devices in the field, for the strongest connectivity and sensor readings. Users can choose the radius for each device with the maximum value around 220 m. This can also be modified to fit each field’s specifications.
 
 
 
