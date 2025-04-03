@@ -21,8 +21,8 @@ public interface RecordRepository extends JpaRepository<Record, Integer> {
     @Query("SELECT r FROM Record r WHERE r.deviceId = :deviceId")
     List<Record> findRecordsByDeviceId(long deviceId);
 
-    @Query(value = "SELECT * FROM records r WHERE r.device_id = ?1 ORDER BY r.timestamp DESC LIMIT ?2", nativeQuery = true)
-    List<Record> findLastNRecordsByDeviceId(@Param("deviceId") long deviceId, @Param("n") int n);
+    @Query(value = "SELECT * FROM records r WHERE r.device_id = ?1 AND r.type = :type ORDER BY r.timestamp DESC LIMIT ?2", nativeQuery = true)
+    List<Record> findLastNRecordsByDeviceId(@Param("deviceId") long deviceId, @Param("n") int n, @Param("type") int type);
 
     @Query(value = """
         SELECT 
