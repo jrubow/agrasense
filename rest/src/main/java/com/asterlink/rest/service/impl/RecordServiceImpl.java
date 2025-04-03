@@ -84,8 +84,8 @@ public class RecordServiceImpl implements RecordService {
 
     // Get last n records for a device.
     @Override
-    public List<Record> getNRecordsByDevice(long deviceId, int n) {
-        return recordRepository.findLastNRecordsByDeviceId(deviceId, n);
+    public List<Record> getNRecordsByDevice(long deviceId, int n, int type) {
+        return recordRepository.findLastNRecordsByDeviceId(deviceId, n, type);
     }
 
     // Get next ID number for a new record.

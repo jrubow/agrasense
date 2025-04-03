@@ -39,8 +39,8 @@ public class RecordController {
 
     // Get last n records from the table for a specific devices
     @GetMapping("/recent")
-    public List<Record> getDeviceLastNRecords(@RequestParam("device_id") long deviceId, @RequestParam("n") int n) {
-        return recordService.getNRecordsByDevice(deviceId, n);
+    public List<Record> getDeviceLastNRecords(@RequestParam("device_id") long deviceId, @RequestParam("n") int n, @RequestParam("type") int type) {
+        return recordService.getNRecordsByDevice(deviceId, n, type);
     }
 
     // Add new record.
