@@ -138,4 +138,25 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     public List<SentinelDevice> findByClientId(int clientId) {
         return sentinelDeviceRepository.findByClientId(clientId);
     }
+
+    // Update location reading
+    @Override
+    public boolean updateLocation(long deviceId, double latitude, double longitude) {
+        SentinelDevice s = sentinelDeviceRepository.findById(deviceId).orElse(null);
+        if (s == null) {
+            return false;
+        }
+        sentinelDeviceRepository.updateLocation(deviceId, latitude, longitude);
+        return true;
+    }
+
+    @Override
+    public boolean updateBattery(long deviceId, double battery) {
+        SentinelDevice s = sentinelDeviceRepository.findById(deviceId).orElse(null);
+        if (s == null) {
+            return false;
+        }
+        sentinelDeviceRepository.updateBattery(deviceId, battery);
+        return true;
+    }
 }

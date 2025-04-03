@@ -3,32 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net",
+  "homepage": "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net",
   "dependencies": {
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.9",
-    "chart.js": "^4.4.8",
+    "@react-google-maps/api": "^2.20.6",
+    "axios": "^1.8.4",
+    "plotly.js": "^3.0.1",
     "react": "^19.0.0",
-    "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^6.29.0",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-plotly.js": "^2.6.0",
+    "react-router-dom": "^7.4.0",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "build": "react-scripts build"
   },
   "browserslist": {
     "production": [

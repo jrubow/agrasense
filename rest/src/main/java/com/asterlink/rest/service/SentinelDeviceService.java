@@ -17,4 +17,6 @@ public interface SentinelDeviceService {
     public List<SentinelDevice> getAllSentinelDevices();
     public String claimSentinelDevice(long deviceId, String password, int clientId);
     public List<SentinelDevice> findByClientId(int clientId);
+    boolean updateLocation(long deviceId, double latitude, double longitude);
+    boolean updateBattery(long deviceId, double battery);
 }

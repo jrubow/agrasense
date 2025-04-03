@@ -1,0 +1,40 @@
+/* Center content and maintain a minimal black and white look */
+
+* {
+  box-sizing: border-box;
+}
+
+.devicepage-container {
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .device-info {
+    border: 1px solid #000;
+    padding: 15px;
+    margin-top: 20px;
+  }
+  
+  .device-info p {
+    margin: 10px 0;
+  }
+
+  .devicepage-info-container {
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    max-width:95%;
+  }
+
+  .devicepage-top-container {
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+  }
+
+  .devicepage-header {
+    display:flex;
+    align-items: center;
+  }

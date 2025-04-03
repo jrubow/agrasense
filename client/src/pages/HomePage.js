@@ -1,112 +1,169 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Line } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import React, { useState, useEffect } from 'react';
+import '../css/pages/homepage.css';
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import Plot from 'react-plotly.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+const Homepage = () => {
+  const navigate = useNavigate();
 
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      min: 0, // Set a fixed minimum value
-      max: 100, // Set a maximum value (adjust based on your dataset)
-      ticks: {
-        stepSize: 10, // Adjust step size for better readability
-      },
+  const [relayDevices, setRelayDevices] = useState([]);
+  const [sentinelDevices, setSentinelDevices] = useState([]);
+  const [tempAverages, setTempAverage ] = useState([]);
+
+  const layout = {
+    title: 'Temperature Changes Over Time',
+    xaxis: {
+      title: 'Time',
+      tickangle: -45,  // Rotate the time labels for better readability
     },
-  },
-};
-
-const options2 = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      min: 0, // Set a fixed minimum value
-      max: 50, // Set a maximum value (adjust based on your dataset)
-      ticks: {
-        stepSize: 10, // Adjust step size for better readability
-      },
+    yaxis: {
+      title: 'Temperature (°C)',
     },
-  },
-};
-
-function HomePage() {
-  const [temperatureData, setTemperatureData] = useState([]);
-  const [humidityData, setHumidityData] = useState([]);
-  const [lightData, setLightData] = useState([]);
-  const [soilData, setSoilData] = useState([]);
-  const [timestamps, setTimestamps] = useState([]);
-
-  // Fetch the data from the API
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        "/record/averages"
-      );
-
-      const data = response.data; // Assuming the data returned is an array of objects
-      console.log(response.data)
-
-      const tempData = data.map(item => item.avgTemp);
-      const humidityData = data.map(item => item.avgHumidity);
-      const lightData = data.map(item => item.avgLight);
-      const soilData = data.map(item => item.avgSoil);
-      const timestamps = data.map(item => item.timestamp);
-
-      setTemperatureData(tempData);
-      setHumidityData(humidityData);
-      setLightData(lightData);
-      setSoilData(soilData);
-      setTimestamps(timestamps);
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    }
+    margin: {
+      t: 20,
+      r: 20,
+      b: 80,
+      l: 20,
+    },
   };
 
-  // Function to generate chart data structure
-  const chartData = (label, data) => ({
-    labels: timestamps,
-    datasets: [
-      {
-        label,
-        data,
-        borderColor: "rgba(75,192,192,1)",
-        backgroundColor: "rgba(75,192,192,0.2)",
-      },
-    ],
-  });
-
-  // Set up periodic data fetching every 10 seconds
   useEffect(() => {
-    fetchData(); // Initial fetch
-    const interval = setInterval(fetchData, 10000); // Fetch data every 10 seconds
+    // GET relay devices
+    const getRelayDevices = async () => {
+      try {
+        const response = await axios.get("/api/devices/relay/all")
+        console.log(response.data)
+        setRelayDevices(response.data)
+      } catch (error) {
+        console.error("Error getting relay devices:", error)
+      }
+    };
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []); // Empty dependency array ensures this runs only once when component mounts
+    // GET sentinel devices
+    const getSentinelDevices = async () => {
+      try {
+        const response = await axios.get("/api/devices/sentinel/all")
+        console.log(response.data)
+        setSentinelDevices(response.data)
+      } catch (error) {
+        console.error("Error getting sentinel devices:", error)
+      }
+    };
+
+    async function getAverages() {
+      try {
+        const currentUTC = new Date().toISOString(); // Current time in UTC
+        const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(); // 12 hours ago
+        const tempResponse = await axios.get(`/api/record/average?type=1&start_timestamp=${twelveHoursAgo}&end_timestamp=${currentUTC}&interval=2`);
+        console.log(tempResponse.data)
+        setTempAverage(tempResponse.data)
+      } catch (error ) {
+        console.error("Error getting averages: ", error)
+      }
+    }
+
+    getRelayDevices()
+    getSentinelDevices()
+    getAverages();
+  }, [])
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px", height: "100vh" }}>
-      <div style={{ height: "300px" }}>
-        <h3>Average Temperature</h3>
-        <Line data={chartData("Temperature", temperatureData)} options={options2} />
-      </div>
-      <div style={{ height: "300px" }}>
-        <h3>Average Humidity</h3>
-        <Line data={chartData("Humidity", humidityData)} options={options2} />
-      </div>
-      <div style={{ height: "300px" }}>
-        <h3>Average Light</h3>
-        <Line data={chartData("Light", lightData)} options={options} />
-      </div>
-      <div style={{ height: "300px" }}>
-        <h3>Average Soil Moisture</h3>
-        <Line data={chartData("Soil", soilData)} options={options} />
-      </div>
+    <div className="homepage-container">
+      <section className="table-section">
+        <h2>Sentinel Devices</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Device ID</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th>Battery Life</th>
+              <th>Is Connected</th>
+              <th>Last Online</th>
+              <th>Deployed</th>
+              <th>Deployed Date</th>
+              <th>Connected Devices</th>
+              <th>Password</th>
+              <th>Client ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sentinelDevices.map((device, index) => (
+              <tr key={index} onClick={() => navigate(`/device?sentinel=1&device_id=${device.device_id}`)}>
+                <td>{device.device_id}</td>
+                <td>{device.latitude}</td>
+                <td>{device.longitude}</td>
+                <td>{device.battery_life}</td>
+                <td>{device.is_connected ? "Yes" : "No"}</td>
+                <td>{device.last_online}</td>
+                <td>{device.deployed ? "Yes" : "No"}</td>
+                <td>{device.deployed_date}</td>
+                <td>{device.numConnected_devices}</td>
+                <td>{device.password}</td>
+                <td>{device.client_id}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+      <section className="table-section">
+        <h2>Relay Devices</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Device ID</th>
+              <th>Sentinel ID</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th>Battery Life</th>
+              <th>Sentinel Connection</th>
+              <th>Is Connected</th>
+              <th>Last Online</th>
+              <th>Deployed</th>
+              <th>Deployed Date</th>
+              <th>Password</th>
+            </tr>
+          </thead>
+          <tbody>
+            {relayDevices.map((device, index) => (
+              <tr key={index} onClick={() => navigate(`/device?sentinel=0&device_id=${device.device_id}`)}>
+                <td>{device.device_id}</td>
+                <td>{device.sentinel_id}</td>
+                <td>{device.latitude}</td>
+                <td>{device.longitude}</td>
+                <td>{device.batteryLife}</td>
+                <td>{device.sentinel_connection ? "Yes" : "No"}</td>
+                <td>{device.is_connected ? "Yes" : "No"}</td>
+                <td>{device.last_online}</td>
+                <td>{device.deployed ? "Yes" : "No"}</td>
+                <td>{device.deployed_date}</td>
+                <td>{device.password}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <div className="divider"></div>
+
+      <h2>Temperature Record Averages</h2>
+
+      <Plot
+        data={[
+          {
+            x: tempAverages.map(item => item.section),
+            y: tempAverages.map(item => item.value),
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Temperature',
+          },
+        ]}
+        layout={layout}
+        style={{ width: '100%', height: '400px' }}
+      />
     </div>
   );
-}
+};
 
-export default HomePage;
+export default Homepage;
