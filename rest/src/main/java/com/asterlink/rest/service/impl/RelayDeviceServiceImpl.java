@@ -30,6 +30,14 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
     @Override
     public boolean createRelayDevice(RelayDevice device) {
         try {
+            // TODO REMOVE
+            double x = 40.4273453;
+            double y = -86.9141558;
+            double randomXOffset = (Math.random() * 0.02) - 0.01;
+            double randomYOffset = (Math.random() * 0.02) - 0.01;
+            device.setLatitude(x + randomXOffset);
+            device.setLongitude(y + randomYOffset);
+            // // // // // // // // // // //
             relayDeviceRepository.save(device);
             return true;
         } catch (Exception e) {
