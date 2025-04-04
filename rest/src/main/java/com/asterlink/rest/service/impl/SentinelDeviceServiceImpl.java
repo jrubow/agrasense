@@ -27,6 +27,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     @Override
     public long createSentinelDevice(SentinelDevice device) {
         try {
+            device.setLastOnline(LocalDateTime.now());
             sentinelDeviceRepository.save(device);
             return sentinelDeviceRepository.findMaxDeviceId();
         } catch (Exception e) {
