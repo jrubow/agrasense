@@ -46,7 +46,7 @@ public class RecordController {
     }
 
     // Get all records from the table for a specific device
-    @GetMapping("/{device_id}")
+    @GetMapping("/device/{device_id}")
     public List<Record> getAllByDevice(@PathVariable("device_id") long deviceId) {
         return recordService.getRecordsByDevice(deviceId);
     }
