@@ -146,6 +146,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
         if (s == null) {
             return false;
         }
+        sentinelDeviceRepository.updateLastOnline(deviceId, LocalDateTime.now());
         sentinelDeviceRepository.updateLocation(deviceId, latitude, longitude);
         return true;
     }
@@ -156,6 +157,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
         if (s == null) {
             return false;
         }
+        sentinelDeviceRepository.updateLastOnline(deviceId, LocalDateTime.now());
         sentinelDeviceRepository.updateBattery(deviceId, battery);
         return true;
     }
