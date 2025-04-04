@@ -45,6 +45,12 @@ public class RecordController {
         return recordService.getNRecordsByDevice(deviceId, n, type);
     }
 
+    // Get all records from the table for a specific device
+    @GetMapping("/{device_id}")
+    public List<Record> getAllByDevice(@PathVariable("device_id") long deviceId) {
+        return recordService.getRecordsByDevice(deviceId);
+    }
+
     // Add new record.
     @PostMapping
     public String createRecord(@RequestBody Record record) {
