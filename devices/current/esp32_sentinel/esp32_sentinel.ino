@@ -14,13 +14,11 @@ const char* externalSSID = "test1234";
 const char* externalPassword = "password123";
 
 // API endpoints
-// const char* batchApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/reports/batch";
-// const char* initApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/sentinel/initialize";
-// const char* initRelayApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/relay/initialize/batch";
-
 const char* batchApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/record/batch";
 const char* initApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/devices/sentinel/initialize";
 const char* initRelayApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/devices/relay/initialize/batch";
+const char* batteryUpdateEndpointBase = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/devices/sentinel/update/battery";
+
 
 Scheduler userScheduler;
 Preferences preferences;
@@ -40,9 +38,15 @@ uint64_t deviceId;
 uint64_t meshInitialized;
 uint64_t sentinelId;
 
-
 // Global variable to store registered device id from initialization response
 uint64_t registeredDeviceId = 0;
+
+// Battery management globals
+double batteryPercentage = 100.0;
+// Battery lifetime estimated in minutes (2.96Wh / 0.9W ≈ 197.33 minutes)
+const double batteryLifetimeMinutes = 197.33; 
+// Timer to update battery status every 2 minutes
+unsigned long lastBatteryUpdateCall = 0; 
 
 void processReceivedData(const String& msg);
 
@@ -52,9 +56,6 @@ void receivedCallback(uint32_t from, String &msg) {
 }
 
 void newConnectionCallback(uint32_t nodeId) {
-    // TODO - need to keep track of devices that have already been added, for now the below will work
-    //        an array of ints of nodeIds stored in flashram should work, careful flash only has 10,000 writes
-
     Serial.printf("New Connection, nodeId = %u\n", nodeId);
     StaticJsonDocument<256> doc;
     doc["instruction_type"] = CONFIGURE;
@@ -81,34 +82,39 @@ void processReceivedData(const String& msg) {
     }
 
     uint64_t instructionType = jsonDoc["instruction_type"];
-    if (instructionType == SEND_SENSOR_DATA) {// Read sensor data fields from the incoming message
-      uint64_t sensorDeviceId = jsonDoc["device_id"];
-      float temperature = jsonDoc["temperature"];
-      float humidity = jsonDoc["humidity"];
-      int light_level = jsonDoc["light_level"];
-      int soil_moisture = jsonDoc["soil_moisture"];
+    if (instructionType == SEND_SENSOR_DATA) { // Read sensor data fields from the incoming message
+        uint64_t sensorDeviceId = jsonDoc["device_id"];
+        float temperature = jsonDoc["temperature"];
+        float humidity = jsonDoc["humidity"];
+        int light_level = jsonDoc["light_level"];
+        int soil_moisture = jsonDoc["soil_moisture"];
+        float battery_life = jsonDoc["battery_life"];
 
-      Serial.println("\n--- Sensor Data Received ---");
-      Serial.printf("Sensor Device ID: %u\n", sensorDeviceId);
-      Serial.printf("Temperature: %.2f°C\n", temperature);
-      Serial.printf("Humidity: %.2f%%\n", humidity);
-      Serial.printf("Light Level: %d%%\n", light_level);
-      Serial.printf("Soil Moisture: %d%%\n", soil_moisture);
-      Serial.println("----------------------------");
-      
+        Serial.println("\n--- Sensor Data Received ---");
+        Serial.printf("Sensor Device ID: %u\n", sensorDeviceId);
+        Serial.printf("Temperature: %.2f°C\n", temperature);
+        Serial.printf("Humidity: %.2f%%\n", humidity);
+        Serial.printf("Light Level: %d%%\n", light_level);
+        Serial.printf("Soil Moisture: %d%%\n", soil_moisture);
+        Serial.printf("Battery: %f\n", battery_life);
+        Serial.println("----------------------------");
+        
+        // Format JSON Temperature data
+        StaticJsonDocument<256> tempDoc;
+        tempDoc["device_id"] = sensorDeviceId;
+        tempDoc["type"] = TEMPERATURE;
+        tempDoc["value"] = temperature;
+        String pushPayload;
+        serializeJson(tempDoc, pushPayload);
+        dataBuffer.push_back(pushPayload);
 
-      // Create JSON report for temperature reading in the new batch format
-      StaticJsonDocument<256> pushDoc;
-      // Use the registered device id (if set) instead of the sensor's device id.
-      pushDoc["device_id"] = sensorDeviceId;
-      pushDoc["type"] = TEMPERATURE;
-      pushDoc["value"] = temperature;
-      // pushDoc["units"] = "Fahrenheit";
-
-      String pushPayload;
-      serializeJson(pushDoc, pushPayload);
-
-      dataBuffer.push_back(pushPayload);
+        // Format JSON Humidity data using a new document
+        StaticJsonDocument<256> humDoc;
+        humDoc["device_id"] = sensorDeviceId;
+        humDoc["type"] = HUMIDITY;
+        humDoc["value"] = humidity;
+        serializeJson(humDoc, pushPayload);
+        dataBuffer.push_back(pushPayload);
     } else if (instructionType == CONFIGURE_DEVICE_ID) {
       Serial.printf("Received CONFIGURE_DEVICE_ID : %d\n", jsonDoc["device_id"]);
       jsonDoc.remove("instruction_type");
@@ -119,7 +125,6 @@ void processReceivedData(const String& msg) {
 }
 
 void sendDataToAPI() {
-
     Serial.println("Connecting to WiFi...");
     WiFi.begin(externalSSID, externalPassword);
     unsigned long wifiStart = millis();
@@ -146,17 +151,16 @@ void sendDataToAPI() {
       for (const auto& entry : dataBuffer) {
           StaticJsonDocument<256> tempDoc;
           deserializeJson(tempDoc, entry);
+          // Optionally add timestamp if needed:
           // tempDoc["timestamp"] = timestamp;
           jsonArray.add(tempDoc);
       }
 
-      
       serializeJson(batchJson, batchPayload);
       Serial.println("Batch Payload:");
       Serial.println(batchPayload);
-
       
-          http.begin(batchApiEndpoint);
+      http.begin(batchApiEndpoint);
       http.addHeader("X-API-KEY", "user");
       http.addHeader("Content-Type", "application/json");
 
@@ -174,38 +178,38 @@ void sendDataToAPI() {
     }
 
     if (!initBuffer.empty()) {
-      http.begin(initRelayApiEndpoint);
-      http.addHeader("X-API-KEY", "user");
-      http.addHeader("Content-Type", "application/json");
+        http.begin(initRelayApiEndpoint);
+        http.addHeader("X-API-KEY", "user");
+        http.addHeader("Content-Type", "application/json");
 
-      batchJson.clear();
-      jsonArray = batchJson.to<JsonArray>();
-      for (const auto& entry : initBuffer) {
-          StaticJsonDocument<256> tempDoc;
-          deserializeJson(tempDoc, entry);
-          tempDoc["sentinel_id"] = sentinelId;
-          jsonArray.add(tempDoc);
-      }
+        batchJson.clear();
+        jsonArray = batchJson.to<JsonArray>();
+        for (const auto& entry : initBuffer) {
+            StaticJsonDocument<256> tempDoc;
+            deserializeJson(tempDoc, entry);
+            tempDoc["sentinel_id"] = sentinelId;
+            jsonArray.add(tempDoc);
+        }
 
-      serializeJson(batchJson, batchPayload);
-      Serial.println("Batch Payload:");
-      Serial.println(batchPayload);
+        serializeJson(batchJson, batchPayload);
+        Serial.println("Batch Payload:");
+        Serial.println(batchPayload);
 
-      int httpResponseCode = http.POST(batchPayload);
-      Serial.printf("HTTP Response Code: %d\n", httpResponseCode);
+        int httpResponseCode = http.POST(batchPayload);
+        Serial.printf("HTTP Response Code: %d\n", httpResponseCode);
 
-      if (httpResponseCode > 0) {
-          Serial.println("Data sent successfully!");
-          dataBuffer.clear();
-      } else {
-          Serial.println("Failed to send data.");
-      }
+        if (httpResponseCode > 0) {
+            Serial.println("Data sent successfully!");
+            dataBuffer.clear();
+        } else {
+            Serial.println("Failed to send data.");
+        }
 
-      http.end();
-      WiFi.disconnect(true);
-      Serial.println("Disconnected from WiFi.");
+        http.end();
+        WiFi.disconnect(true);
+        Serial.println("Disconnected from WiFi.");
     } else {
-      Serial.printf("No devices to init\n");
+        Serial.printf("No devices to init\n");
     }
 
     initBuffer.clear();
@@ -276,7 +280,7 @@ void initializeDevice() {
         int lastSpace = initResponse.lastIndexOf(' ');
         if (lastSpace >= 0) {
             String idStr = initResponse.substring(lastSpace + 1);
-            // registeredDeviceId = idStr.toInt();
+            // For demonstration purposes, we set a fixed value.
             registeredDeviceId = 9;
             Serial.printf("Registered Device ID: %u\n", registeredDeviceId);
         } else {
@@ -288,8 +292,65 @@ void initializeDevice() {
     }
 
     http.end();
+
+    String url = String(batteryUpdateEndpointBase) +
+                 "?device_id=" + String(sentinelId) +
+                 "&battery=100.0";
+    http.begin(url);
+    httpResponseCode = http.POST("");
+    if (httpResponseCode > 0) {
+        Serial.printf("Battery update sent successfully. Response code: %d\n", httpResponseCode);
+    } else {
+        Serial.println("Failed to update battery status.");
+    }
+    http.end();
     WiFi.disconnect(true);
     Serial.println("Disconnected from WiFi (initialization).");
+}
+
+// New function: update battery status
+void updateBatteryStatus() {
+    unsigned long now = millis();
+    // Calculate elapsed time in minutes since last battery update
+    double elapsedMinutes = (now - lastBatteryUpdateCall) / 60000.0;
+    // Compute drop: 100% over batteryLifetimeMinutes
+    double drop = elapsedMinutes * (100.0 / batteryLifetimeMinutes);
+    batteryPercentage -= drop;
+    if (batteryPercentage < 0) {
+        batteryPercentage = 0;
+    }
+    Serial.printf("Updated Battery Percentage: %.2f%%\n", batteryPercentage);
+    lastBatteryUpdateCall = now;
+
+    // Connect to WiFi to send the battery update
+    Serial.println("Connecting to WiFi for battery update...");
+    WiFi.begin(externalSSID, externalPassword);
+    unsigned long wifiStart = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 10000) {
+        delay(500);
+        Serial.print(".");
+    }
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("\nFailed to connect to WiFi for battery update");
+        return;
+    }
+
+    // Build the battery update URL
+    String url = String(batteryUpdateEndpointBase) +
+                 "?device_id=" + String(sentinelId) +
+                 "&battery=" + String(batteryPercentage, 2);
+
+    HTTPClient http;
+    http.begin(url);
+    int httpResponseCode = http.POST("");
+    if (httpResponseCode > 0) {
+        Serial.printf("Battery update sent successfully. Response code: %d\n", httpResponseCode);
+    } else {
+        Serial.println("Failed to update battery status.");
+    }
+    http.end();
+    WiFi.disconnect(true);
+    Serial.println("Disconnected from WiFi (battery update).");
 }
 
 void setup() {
@@ -310,6 +371,7 @@ void setup() {
     initializeDevice();
 
     lastSentTime = millis();
+    lastBatteryUpdateCall = millis(); // initialize battery update timer
 }
 
 void loop() {
@@ -318,5 +380,10 @@ void loop() {
     if (millis() - lastSentTime >= interval) {
         sendDataToAPI();
         lastSentTime = millis();
+    }
+    
+    // Update battery status every 2 minutes (120,000 milliseconds)
+    if (millis() - lastBatteryUpdateCall >= 120000) {
+        updateBatteryStatus();
     }
 }
