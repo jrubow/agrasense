@@ -9,13 +9,14 @@ const Homepage = () => {
 
   const [relayDevices, setRelayDevices] = useState([]);
   const [sentinelDevices, setSentinelDevices] = useState([]);
-  const [tempAverages, setTempAverage ] = useState([]);
+  const [tempAverages, setTempAverages ] = useState([]);
+  const [humAverages, setHumAverages] = useState([])
 
-  const layout = {
+  const layout_temperature = {
     title: 'Temperature Changes Over Time',
     xaxis: {
       title: 'Time',
-      tickangle: -45,  // Rotate the time labels for better readability
+      tickangle: -45,
     },
     yaxis: {
       title: 'Temperature (°C)',
@@ -27,6 +28,27 @@ const Homepage = () => {
       l: 20,
     },
   };
+
+  const layout_humidity = {
+    title: 'Humidity Changes Over Time',
+    xaxis: {
+      title: 'Time',
+      tickangle: -45,
+    },
+    yaxis: {
+      title: 'Humidity (%)',
+    },
+    line: {
+      color: 'red',
+      width: 2,
+    },
+    margin: {
+      t: 20,
+      r: 20,
+      b: 80,
+      l: 20,
+    },
+  }
 
   useEffect(() => {
     // GET relay devices
@@ -56,8 +78,10 @@ const Homepage = () => {
         const currentUTC = new Date().toISOString(); // Current time in UTC
         const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(); // 12 hours ago
         const tempResponse = await axios.get(`/api/record/average?type=1&start_timestamp=${twelveHoursAgo}&end_timestamp=${currentUTC}&interval=2`);
-        console.log(tempResponse.data)
-        setTempAverage(tempResponse.data)
+        const humAverages = await axios.get(`/api/record/average?type=2&start_timestamp=${twelveHoursAgo}&end_timestamp=${currentUTC}&interval=2`);
+        console.log("Retrieving Data")
+        setTempAverages(tempResponse.data)
+        setHumAverages(humAverages.data)
       } catch (error ) {
         console.error("Error getting averages: ", error)
       }
@@ -159,8 +183,25 @@ const Homepage = () => {
             name: 'Temperature',
           },
         ]}
-        layout={layout}
+        layout={layout_temperature}
         style={{ width: '100%', height: '400px' }}
+      />
+      <h2>Humidity Record Averages</h2>
+
+      <Plot
+        data={[
+          {
+            x: humAverages.map(item => item.section),
+            y: humAverages.map(item => item.value),
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Humidity',
+            line: { color: 'red', width: 2 }
+          },
+        ]}
+        layout={layout_humidity}
+        style={{ width: '100%', height: '400px' }}
+        
       />
     </div>
   );
