@@ -5,7 +5,7 @@ Smart, scalable field monitoring using low-power WiFi & Lora Mesh nodes and ESP3
 
 ## Overview
 
-This project uses a WiFi & LoRa Mesh Network to collect real-time environmental data (temperature, humidity, soil moisture, and light) across farmland. Sensor nodes relay information wirelessly through a self-healing mesh to a central Wi-Fi-connected provisioner node.
+This project uses a WiFi & LoRa Mesh Network to collect real-time environmental data (temperature, humidity, soil moisture, and light) across farmland and natural preserves. Sensor nodes relay information wirelessly through a self-healing mesh to a central Wi-Fi-connected provisioner node.
 
 ## Problem Statement
 ### Premise
