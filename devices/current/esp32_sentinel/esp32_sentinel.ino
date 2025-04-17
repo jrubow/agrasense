@@ -10,8 +10,10 @@
 #define MESH_PASSWORD "AsterLinkMesh2025$#"
 #define MESH_PORT 5555
 
-const char* externalSSID = "test1234";
-const char* externalPassword = "password123";
+const char* SSID     = "PAL3.0";
+const char* IDENTITY = "jrubow";
+const char* USERNAME = "jrubow";
+const char* PASSWORD = "834Trump14Banana";
 
 // API endpoints
 const char* batchApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/record/batch";
@@ -119,7 +121,7 @@ void processReceivedData(const String& msg) {
 void sendDataToAPI() {
 
     Serial.println("Connecting to WiFi...");
-    WiFi.begin(externalSSID, externalPassword);
+    WiFi.begin(SSID, WPA2_AUTH_PEAP, IDENTITY, USERNAME, PASSWORD); 
     unsigned long wifiStart = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 10000) {
         delay(500);
@@ -200,11 +202,12 @@ void sendDataToAPI() {
         }
 
         http.end();
-        WiFi.disconnect(true);
         Serial.println("Disconnected from WiFi.");
     } else {
         Serial.printf("No devices to init\n");
     }
+
+    WiFi.disconnect(true);
 
     initBuffer.clear();
     dataBuffer.clear();
@@ -237,7 +240,7 @@ uint64_t macAddressToInteger(const String& mac) {
 
 void initializeDevice() {
     Serial.println("Initializing device...");
-    WiFi.begin(externalSSID, externalPassword);
+    WiFi.begin(SSID, WPA2_AUTH_PEAP, IDENTITY, USERNAME, PASSWORD); 
     unsigned long wifiStart = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 10000) {
         delay(500);
@@ -310,8 +313,32 @@ void setup() {
     lastSentTime = millis();
 }
 
+void sendSyncMessage() {
+    // Get the current epoch time (seconds since 1970)
+    time_t currentEpoch = time(nullptr);
+    
+    // Construct the message payload (assuming SYNCHRONIZE_TIME is defined in configuration.h)
+    StaticJsonDocument<128> jsonDoc;
+    jsonDoc["instruction_type"] = SYNCHRONIZE_TIME;  
+    jsonDoc["epoch"] = currentEpoch;
+    
+    String payload;
+    serializeJson(jsonDoc, payload);
+    
+    Serial.println("Broadcasting SYNCHRONIZE_TIME message:");
+    Serial.println(payload);
+    
+    // Broadcast to all nodes in the mesh network (relay devices)
+    mesh.sendBroadcast(payload);
+}
+
 void loop() {
     mesh.update();
+
+    if (millis() - lastSyncTime >= syncInterval) {
+        sendSyncMessage();
+        lastSyncTime = millis();
+    
     
     if (millis() - lastSentTime >= interval) {
         sendDataToAPI();

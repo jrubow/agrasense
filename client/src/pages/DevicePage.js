@@ -13,6 +13,7 @@ const DevicePage = () => {
   const [device, setDevice] = useState(null)
   const [tempN, setTempN] = useState([])
   const [lastOnlineDifferential, setLastOnlineDifferential ] = useState(0)
+  const [geoLocationForm, setGeoLocationForm] = useState(false)
   const navigate = useNavigate()
 
   const layout = {
@@ -79,7 +80,12 @@ const DevicePage = () => {
         if (device && device.last_online != null) {
             setLastOnlineDifferential(new Date() - new Date(device.last_online));
         }
-    }, [device]);
+    }, [device])
+
+    function handleGeoLocationSubmit() {
+        setGeoLocationForm(false)
+        alert("geolocation")
+    }
 
   return (
     <div className="devicepage-top-container">
@@ -91,20 +97,35 @@ const DevicePage = () => {
                 </div>
                 { lastOnlineDifferential > 120000 && lastOnlineDifferential != 0 ? <h3 style={{color:"red"}}>Device has not reported for {Math.round(lastOnlineDifferential / 60000) } minutes</h3> : ""}
                 <div className="device-info">
-                    <p><strong>Device ID:</strong> {device.device_id}</p>
-                    <p><strong>Battery Life:</strong> {device.battery_life}</p>
-                    <p><strong>Is Deployed:</strong> {device.deployed ? "Yes" : "No"}</p>
-                    <p><strong>Deployed Date:</strong> {device.deployed_date}</p>
-                    <p><strong>Is Connected:</strong> {device.is_connected ? "Yes" : "No"}</p>
-                    <p><strong>Last Online:</strong> {device.last_online}</p>
-                    <p><strong>Latitude:</strong> {device.latitude}</p>
-                    <p><strong>Longitude:</strong> {device.longitude}</p>
-                    {sentinel === "1" ? 
-                        <p><strong># of Connected Devices:</strong> {relayDevices.length}</p> 
-                        : 
-                        <p><strong>Sentinel Id:</strong> <Link to={"/device?sentinel=1&device_id=" + device.sentinel_id}>{device.sentinel_id}</Link></p> }
+                    <div className="device-instructions">
+                        <button onClick={() => setGeoLocationForm(true)}>Set GeoLocation</button>
+                    </div>
+                    <div className="device-stats">
+                        <p><strong>Device ID:</strong> {device.device_id}</p>
+                        <p><strong>Battery Life:</strong> {device.battery_life}</p>
+                        <p><strong>Is Deployed:</strong> {device.deployed ? "Yes" : "No"}</p>
+                        <p><strong>Deployed Date:</strong> {device.deployed_date}</p>
+                        <p><strong>Is Connected:</strong> {device.is_connected ? "Yes" : "No"}</p>
+                        <p><strong>Last Online:</strong> {device.last_online}</p>
+                        <p><strong>Latitude:</strong> {device.latitude}</p>
+                        <p><strong>Longitude:</strong> {device.longitude}</p>
+                        {sentinel === "1" ? 
+                            <p><strong># of Connected Devices:</strong> {relayDevices.length}</p> 
+                            : 
+                            <p><strong>Sentinel Id:</strong> <Link to={"/device?sentinel=1&device_id=" + device.sentinel_id}>{device.sentinel_id}</Link></p> }
+                    </div>
                 </div>
             </div> : ""}
+            {
+                geoLocationForm ? 
+                <div className="device-info device-stats devicepage-info-container ">
+                    <input type="number" placeholder="Latitude"/>
+                    <input type="number" placeholder="Longitude"/>
+                    <button onClick={handleGeoLocationSubmit}>Submit</button>
+                </div>
+                : ""
+
+            }
             {sentinel === "1" ? "" : 
                 <Plot
                     data={[

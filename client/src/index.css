@@ -32,3 +32,7 @@ h3 {
     font-size:16px;
     text-align:left;
 }
+
+input {
+    margin:10px;
+}
