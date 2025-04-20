@@ -1,11 +1,15 @@
 #include <Arduino.h>
-#include <U8g2lib.h>
 #include <Wire.h>
-#include <time.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1309.h>
 #include <ArduinoJson.h>
+#include <time.h>
 
 // OLED Display (I2C SSD1309 - 128x64)
-U8G2_SSD1309_128X64_NONAME0_F_HW_I2C u8g2(U8G2_R0);
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET     -1
+Adafruit_SSD1309 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 // Screen states
 enum ScreenState { SCREEN_DEFAULT, SCREEN_NODE_DATA, SCREEN_ALERTS };
@@ -34,53 +38,52 @@ String getCurrentTimeString() {
 }
 
 void drawDefaultScreen() {
-  u8g2.clearBuffer();
-  u8g2.setFont(u8g2_font_6x10_tr);
-  u8g2.drawStr(0, 10, "AsterLink Sentinel");
-  u8g2.drawStr(0, 25, wifiConnected ? "Wi-Fi: Connected" : "Wi-Fi: Disconnected");
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println("AsterLink Sentinel");
+  display.println(wifiConnected ? "Wi-Fi: Connected" : "Wi-Fi: Disconnected");
 
-  char buf[32];
-  snprintf(buf, sizeof(buf), "Nodes: %d", meshNodeCount);
-  u8g2.drawStr(0, 40, buf);
+  display.print("Nodes: ");
+  display.println(meshNodeCount);
 
-  snprintf(buf, sizeof(buf), "Last RX: %s", lastReceivedTimestamp.c_str());
-  u8g2.drawStr(0, 55, buf);
-
-  u8g2.sendBuffer();
+  display.print("Last RX: ");
+  display.println(lastReceivedTimestamp);
+  display.display();
 }
 
 void drawNodeDataScreen() {
-  u8g2.clearBuffer();
-  u8g2.setFont(u8g2_font_6x10_tr);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
 
-  char buf[32];
-  snprintf(buf, sizeof(buf), "Node: %s", lastNodeId.c_str());
-  u8g2.drawStr(0, 10, buf);
+  display.print("Node: ");
+  display.println(lastNodeId);
+  display.print("Temp: ");
+  display.print(lastTemp); display.println(" C");
+  display.print("Humidity: ");
+  display.print(lastHumidity); display.println(" %");
+  display.print("Time: ");
+  display.println(lastNodeTime);
 
-  snprintf(buf, sizeof(buf), "Temp: %.1f C", lastTemp);
-  u8g2.drawStr(0, 25, buf);
-
-  snprintf(buf, sizeof(buf), "Humidity: %.1f%%", lastHumidity);
-  u8g2.drawStr(0, 40, buf);
-
-  snprintf(buf, sizeof(buf), "Time: %s", lastNodeTime.c_str());
-  u8g2.drawStr(0, 55, buf);
-
-  u8g2.sendBuffer();
+  display.display();
 }
 
 void drawAlertScreen() {
-  u8g2.clearBuffer();
-  u8g2.setFont(u8g2_font_6x10_tr);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
 
-  u8g2.drawStr(0, 10, "! ALERTS");
+  display.println("! ALERTS");
   if (!wifiConnected) {
-    u8g2.drawStr(0, 30, "Wi-Fi Disconnected!");
+    display.println("Wi-Fi Disconnected!");
   } else {
-    u8g2.drawStr(0, 30, "All systems OK.");
+    display.println("All systems OK.");
   }
-
-  u8g2.sendBuffer();
+  display.display();
 }
 
 void updateScreen() {
@@ -105,7 +108,11 @@ void updateScreen() {
 
 void processReceivedData(const String& msg) {
   StaticJsonDocument<256> doc;
-  if (deserializeJson(doc, msg)) return;
+  DeserializationError err = deserializeJson(doc, msg);
+  if (err) {
+    Serial.println("JSON parse failed!");
+    return;
+  }
 
   lastNodeId = String((uint32_t)doc["device_id"], HEX);
   lastTemp = doc["temperature"];
@@ -115,11 +122,17 @@ void processReceivedData(const String& msg) {
 }
 
 void setup() {
-  u8g2.begin();
-  u8g2.clear();
-  u8g2.setFont(u8g2_font_6x10_tr);
-  u8g2.drawStr(0, 30, "Starting OLED...");
-  u8g2.sendBuffer();
+  Serial.begin(115200);
+  if (!display.begin(SSD1309, 0x3C)) { // Default I2C address
+    Serial.println("SSD1309 allocation failed");
+    for (;;);
+  }
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 20);
+  display.println("Starting OLED...");
+  display.display();
   delay(1000);
 
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
