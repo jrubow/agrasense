@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.asterlink.rest.model.SentinelDevice;
+import com.asterlink.rest.repository.SentinelDeviceRepository;
+import com.asterlink.rest.service.SentinelDeviceService;
 import org.springframework.stereotype.Service;
 import com.asterlink.rest.model.RelayDevice;
 import com.asterlink.rest.repository.RelayDeviceRepository;
@@ -21,10 +23,14 @@ import com.asterlink.rest.service.RelayDeviceService;
 @Service
 public class RelayDeviceServiceImpl implements RelayDeviceService {
     private final RelayDeviceRepository relayDeviceRepository;
+    private final SentinelDeviceService sentinelDeviceService;
+    private final SentinelDeviceRepository sentinelDeviceRepository;
 
     // Constructor for RelayDeviceServiceImpl
-    public RelayDeviceServiceImpl(RelayDeviceRepository relayDeviceRepository) {
+    public RelayDeviceServiceImpl(RelayDeviceRepository relayDeviceRepository, SentinelDeviceService sentinelDeviceService, SentinelDeviceRepository sentinelDeviceRepository) {
         this.relayDeviceRepository = relayDeviceRepository;
+        this.sentinelDeviceService = sentinelDeviceService;
+        this.sentinelDeviceRepository = sentinelDeviceRepository;
     }
 
     @Override
@@ -39,6 +45,10 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
             device.setLongitude(y + randomYOffset);
             // // // // // // // // // // //
             relayDeviceRepository.save(device);
+            relayDeviceRepository.updateLastOnline(device.getDeviceId(), LocalDateTime.now());
+            relayDeviceRepository.setDeployedDate(device.getDeviceId(), LocalDateTime.now());
+            relayDeviceRepository.setDeployedStatus(device.getDeviceId(), true);
+            sentinelDeviceRepository.incrementNumConnectedDevices(device.getSentinelId());
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +102,6 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
                 }
             }
         });
-
         return "RELAY DEVICE UPDATED";
     }
 
@@ -143,3 +152,4 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
         }
     }
 }
+

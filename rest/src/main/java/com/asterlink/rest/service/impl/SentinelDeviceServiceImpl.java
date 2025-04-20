@@ -29,6 +29,8 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
         try {
             device.setLastOnline(LocalDateTime.now());
             sentinelDeviceRepository.save(device);
+            sentinelDeviceRepository.setDeployedStatus(device.getDeviceId(), true);
+            sentinelDeviceRepository.setDeployedDate(device.getDeviceId(), LocalDateTime.now());
             return sentinelDeviceRepository.findMaxDeviceId();
         } catch (Exception e) {
             e.printStackTrace();

@@ -31,6 +31,21 @@ public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, 
     @Transactional
     @Query("UPDATE SentinelDevice s SET s.longitude = :longitude, s.latitude = :latitude WHERE s.deviceId = :deviceId")
     void updateLocation(@Param("deviceId") Long deviceId, @Param("longitude") double latitude, @Param("latitude") double longitude);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE SentinelDevice r SET r.deployedDate = :currentDateTime WHERE r.deviceId = :deviceId")
+    void setDeployedDate(@Param("deviceId") Long deviceId, @Param("currentDateTime") LocalDateTime currentDateTime);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE SentinelDevice r SET r.deployed = :deployed WHERE r.deviceId = :deviceId")
+    void setDeployedStatus(@Param("deviceId") Long deviceId, @Param("currentDateTime") boolean deployed);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE SentinelDevice r SET r.numConnectedDevices = r.numConnectedDevices + 1 WHERE r.deviceId = :deviceId")
+    void incrementNumConnectedDevices(@Param("deviceId") Long deviceId);
     
     @Modifying
     @Transactional

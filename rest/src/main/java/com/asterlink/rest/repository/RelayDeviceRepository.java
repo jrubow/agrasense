@@ -25,6 +25,16 @@ public interface RelayDeviceRepository extends JpaRepository<RelayDevice, Long> 
     @Query("UPDATE RelayDevice r SET r.lastOnline = :currentDateTime WHERE r.deviceId = :deviceId")
     void updateLastOnline(@Param("deviceId") Long deviceId, @Param("currentDateTime") LocalDateTime currentDateTime);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE RelayDevice r SET r.deployedDate = :currentDateTime WHERE r.deviceId = :deviceId")
+    void setDeployedDate(@Param("deviceId") Long deviceId, @Param("currentDateTime") LocalDateTime currentDateTime);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE RelayDevice r SET r.deployed = :deployed WHERE r.deviceId = :deviceId")
+    void setDeployedStatus(@Param("deviceId") Long deviceId, @Param("currentDateTime") boolean deployed);
+
     @Query("SELECT r.sentinelId FROM RelayDevice r WHERE r.deviceId = :deviceId")
     Long findSentinelIdByDeviceId(@Param("deviceId") Long deviceId);
 
