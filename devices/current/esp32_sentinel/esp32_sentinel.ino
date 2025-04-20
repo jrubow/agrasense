@@ -13,7 +13,6 @@
 const char* SSID     = "PAL3.0";
 const char* IDENTITY = "jrubow";
 const char* USERNAME = "jrubow";
-const char* PASSWORD = "834Trump14Banana";
 
 // API endpoints
 const char* batchApiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/api/record/batch";
