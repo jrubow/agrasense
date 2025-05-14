@@ -5,14 +5,13 @@
 #define NUM_EPOCHS 100
 #define NUM_STATES 15
 #define BASE_SLEEP_DURATION_US (60ULL * 1000000ULL)
-#define RESET 1
-
+#define RESET 0
 
 Preferences preferences;
 
 void setup() {
   if (!RESET) {
-    Serial.begin(9600);
+    Serial.begin(115200);
     // delay(1000);
 
     Serial.println("SIG");

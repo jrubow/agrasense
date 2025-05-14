@@ -21,6 +21,7 @@
 #define CONFIGURE_DEVICE_ID 2
 #define SEND_SENSOR_DATA 3
 #define SYNCHRONIZE_TIME 4
+#define WAKE_DEVICE 5
 
 // Status Signals
 #define OK 0

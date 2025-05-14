@@ -36,3 +36,16 @@ h3 {
 input {
     margin:10px;
 }
+
+.align-parallel {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:baseline;
+}
+
+a {
+  /* text-decoration: none; */
+  color: inherit;
+  cursor: pointer;
+}

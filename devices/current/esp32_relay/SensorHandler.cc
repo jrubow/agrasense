@@ -9,7 +9,7 @@
 
 // Sensor Pinouts
 #define DHTPIN 4
-#define DHTTYPE DHT22
+#define DHTTYPE DHT11
 #define LIGHT_SENSOR_PIN 34
 #define SOIL_MOISTURE_PIN 35
 

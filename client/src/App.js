@@ -4,14 +4,16 @@ import HomePage from "./pages/HomePage";
 import NavBar from "./components/NavBar";
 import DevicePage from "./pages/DevicePage"
 import MapPage from "./pages/MapPage"
+import LandingPage from "./pages/LandingPage"
 
 
 function App() {
   return (
       <BrowserRouter >
-        <NavBar/>
+        {/* <NavBar/> */}
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/analytics" element={<HomePage />} />
             <Route path="/device" element={<DevicePage/>}/>
             <Route path="/deploy" element={<DeployPage />} />
             <Route path="/map" element={<MapPage/>}/>

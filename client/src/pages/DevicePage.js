@@ -12,26 +12,35 @@ const DevicePage = () => {
   const [relayDevices, setRelayDevices] = useState([])
   const [device, setDevice] = useState(null)
   const [tempN, setTempN] = useState([])
+  const [humN, setHumN] = useState([])
   const [lastOnlineDifferential, setLastOnlineDifferential ] = useState(0)
   const [geoLocationForm, setGeoLocationForm] = useState(false)
   const navigate = useNavigate()
+  let n = 25;
 
   const layout = {
-    title: 'Temperature Changes Over Time',
     xaxis: {
       title: 'Time',
-      tickangle: -45,  // Rotate the time labels for better readability
-    },
-    yaxis: {
-      title: 'Temperature (°C)',
+      tickangle: -45,
     },
     margin: {
-      t: 20,
+      t: 40,
       r: 20,
       b: 80,
       l: 40,
     },
+    legend: {
+      // position relative to the plotting area:
+      x: 0.98,
+      y: 0.98,
+      xanchor: 'right',
+      yanchor: 'top',
+      bgcolor: 'rgba(255,255,255,0)',  // fully transparent
+      bordercolor: '#ccc',
+      borderwidth: 1,
+    },
   };
+  
 
 
     useEffect(() => {
@@ -63,9 +72,10 @@ const DevicePage = () => {
 
         async function getNRecords() {
             try {
-                const response = await axios.get(`/api/record/recent?device_id=${deviceId}&n=25`)
-                setTempN(response.data)
-                console.log(response.data)
+                const tempRes = await axios.get(`/api/record/recent?device_id=${deviceId}&n=25&type=1`)
+                setTempN(tempRes.data)
+                const humRes = await axios.get(`/api/record/recent?device_id=${deviceId}&n=25&type=2`)
+                setHumN(humRes.data)
 
             } catch (error) {
                 console.error("Error getting n records", error)
@@ -127,6 +137,8 @@ const DevicePage = () => {
 
             }
             {sentinel === "1" ? "" : 
+            <div style={{width:"100%"}}>
+                {/* <h1 style={{width:"100%"}}>Temperature Records</h1> */}
                 <Plot
                     data={[
                         {
@@ -136,11 +148,19 @@ const DevicePage = () => {
                         mode: 'lines+markers',
                         name: 'Temperature',
                         },
+                        {
+                            x: humN.map(item => item.timestamp),
+                            y: humN.map(item => item.value),
+                            type: 'scatter',
+                            mode: 'lines+markers',
+                            name: 'Humidity',
+                            marker: { color: 'purple' }
+                        }
                     ]}
                     layout={layout}
                     style={{ width: '100%', height: '400px' }}
                     />
-
+                </div>
             }
             { sentinel === "1" ? 
                 <section className="table-section">
