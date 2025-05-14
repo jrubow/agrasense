@@ -1,4 +1,4 @@
-# AgraSense - Smart Farms, Smart Agriculture
+# AgraSense - Smart Farms, Smart Agriculture | Smart Agriculiture, Smarter Decisions
 ### Mesh Sensor Network for Agriculture
 
 Smart, scalable field monitoring using low-power WiFi & Lora Mesh nodes and ESP32 microcontrollers.
