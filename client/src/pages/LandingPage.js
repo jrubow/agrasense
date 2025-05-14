@@ -12,14 +12,14 @@ export default function LandingPage() {
   return (
     <div className="landingpage-container">
       <header className="landingpage-header">
-        <Link to="/"><img src="/logo_white.png" width="200px"/></Link>
+        <Link to="/"><img src="/logo_white.png" width="300px" style={{marginLeft:"15px"}}/></Link>
       </header>
 
       <section className="landingpage-hero">
         <div className="landingpage-hero-text">
-          <h2>Smart Agriculture,</h2>
+          <h2 style={{fontSize:"62.5px"}}>Smart Agriculture,</h2>
           <h2>Smarter Decisions.</h2>
-          <p>
+          <p style={{fontSize:"18.5px"}}>
             Cut costs and farm smarter with real-time, affordable field insights.
           </p>
           {/* Add a call-to-action button if you like */}
@@ -30,12 +30,18 @@ export default function LandingPage() {
             {/* <p>AgraSensor</p> */}
           </div>
           <div className="landingpage-hero-image-info">
-              <div className="align-parallel"><FaSun className="landingpage-info-icon" style={{color:"orange"}}/><h1>Solar Powered</h1></div>
+              {/* <div className="align-parallel"><FaSun className="landingpage-info-icon" style={{color:"orange"}}/><h1>Solar Powered</h1></div>
               <div className="align-parallel"><FaWifi className="landingpage-info-icon" style={{color:"rgb(0, 150, 250)"}}/><h1>Offline Connectivity</h1></div>
               <div className="align-parallel"><FaTemperatureHigh className="landingpage-info-icon" style={{color:"rgb(215, 31, 31)"}}/><h1>Multiple Sensors</h1></div>
               <div className="align-parallel"><FaPlug className="landingpage-info-icon" style={{color:"purple"}}/><h1>Plug & Play</h1></div>
               <div className="align-parallel"><MdSpeed className="landingpage-info-icon" style={{color:"rgb(0, 150, 250)"}}/><h1>Timely Data</h1></div>
-              <div className="align-parallel"><FaTools className="landingpage-info-icon" style={{color:"darkgray"}}/><h1>No Maintenance</h1></div>
+              <div className="align-parallel"><FaTools className="landingpage-info-icon" style={{color:"darkgray"}}/><h1>No Maintenance</h1></div> */}
+              <div className="align-parallel"><h1>Solar Powered</h1></div>
+              <div className="align-parallel"><h1>Offline Connectivity</h1></div>
+              <div className="align-parallel"><h1>Multiple Sensors</h1></div>
+              <div className="align-parallel"><h1>Plug & Play</h1></div>
+              <div className="align-parallel"><h1>Timely Data</h1></div>
+              <div className="align-parallel"><h1>No Maintenance</h1></div>
           </div>
         </div>
       </section>

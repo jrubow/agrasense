@@ -42,12 +42,13 @@
 
   .landingpage-hero-text {
     max-width: 50%;
+    text-align:left;
   }
   
   .landingpage-hero-text h2 {
     margin-top: 0;
     color: white;
-    font-size: 50px;
+    font-size: 60px;
   }
   
   .landingpage-hero-image {
@@ -74,6 +75,11 @@
   .landingpage-hero-image img {
     height: auto;
     width: 250px;
+    /* background-color: var(--primary-color); */
+    margin-right:20px;
+    /* border-radius: 15px; */
+    margin-top:15px;
+    /* box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.3); */
   }
 
   .landingpage-hero-image-img {
@@ -90,7 +96,7 @@
 
   .landingpage-hero-image-info h1 {
     color:var(--secondary-green);
-    font-size: 22px;
+    font-size: 27px;
     font-weight: bolder;
   }
   
@@ -145,9 +151,13 @@
     text-align: left;
 
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.5fr 1fr;
     align-items: center;
     justify-content: center;
+  }
+
+  .landingpage-usecase h4 {
+    font-size:20px;
   }
 
   .landingpage-usecase > :first-child {
