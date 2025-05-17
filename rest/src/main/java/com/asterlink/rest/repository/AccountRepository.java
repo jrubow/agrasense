@@ -40,4 +40,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Query("UPDATE Account a SET a.loginAttempts = 0 WHERE a.id = :id")
     void resetLoginAttempts(@Param("id") Long id);
 
+    // Returns false is email is not in the system yet; true if otherwise.
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END FROM Account a WHERE a.email = :email")
+    boolean existsByEmail(@Param("email") String email);
+
 }

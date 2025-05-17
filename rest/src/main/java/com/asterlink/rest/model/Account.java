@@ -61,10 +61,11 @@ public class Account {
     // Parameterized constructor: Account creation.
     public Account(String email, String password, String first, String last) {
         this.email = email;
-        this.password = password;
+        this.password = password; // Stores hashed value, 60 characters.
         this.first = first;
         this.last = last;
-        this.lastLogin = LocalDateTime.now();
+        // Set defaults - placeholders.
+        this.lastLogin = LocalDateTime.now(); // TODO consider changing this later.
         this.loginAttempts = 0;
         this.verified = false;
         this.admin = false;
