@@ -1,8 +1,16 @@
 package com.asterlink.rest.service.impl;
 
+import com.asterlink.rest.model.Account;
 import com.asterlink.rest.repository.AccountRepository;
 import com.asterlink.rest.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 /**
  * Service implementation for Account.
@@ -13,9 +21,66 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountServiceImpl implements AccountService {
 
+    // Authentication manager for proper JWT logic.
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     // Set up repository access.
     private final AccountRepository accountRepository;
+    @Autowired
+    private AccountService accountService;
+
     public AccountServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
+
+    // Save new account entry.
+    @Override
+    public int addAccount(String email, String password, String firstName, String lastName) {
+        if (accountRepository.existsByEmail(email)) {
+            return 1; // Code 1: Email already registered.
+        }
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12)); // Always a 60-char string.
+        Account account = new Account(email, hashedPassword, firstName, lastName);
+        account.setId(getNextAccountId());
+        accountRepository.save(account);
+        return 0;
+    }
+
+    // Verify login credentials.
+    @Override
+    public int checkCredentials(String email, String password) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password));
+        if (authentication.isAuthenticated()) {
+            Account account = accountRepository.findByEmail(email);
+            accountRepository.updateLastLogin(account.getId(), LocalDateTime.now());
+            return 0;
+        }
+        return 1;
+
+        /*
+        if (!accountRepository.existsByEmail(email)) {
+            return 1; // Code 1: Email not found.
+        }
+        Account account = accountRepository.findByEmail(email);
+        if (!BCrypt.checkpw(password, account.getPassword())) {
+            return 2; // Code 2: Incorrect password.
+        }
+        return 0;
+         */
+    }
+
+    // Get next account ID.
+    @Override
+    public long getNextAccountId() {
+        return accountRepository.findMaxId() == null ? 1000 : accountRepository.findMaxId() + 1;
+    }
+
+    // Find account by associated email.
+    @Override
+    public Account getAccountByEmail(String email) {
+        return accountRepository.findByEmail(email);
+    }
+
 }

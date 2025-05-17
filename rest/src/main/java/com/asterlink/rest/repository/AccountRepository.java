@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @author gl3bert
  */
 
-public interface AccountRepository extends JpaRepository<Account, Integer> {
+public interface AccountRepository extends JpaRepository<Account, String> {
 
     // Find maximum assigned account ID.
     @Query("SELECT MAX(a.id) FROM Account a")
@@ -40,4 +40,11 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Query("UPDATE Account a SET a.loginAttempts = 0 WHERE a.id = :id")
     void resetLoginAttempts(@Param("id") Long id);
 
+    // Returns false is email is not in the system yet; true if otherwise.
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END FROM Account a WHERE a.email = :email")
+    boolean existsByEmail(@Param("email") String email);
+
+    // Return the account with associated email.
+    @Query("SELECT a FROM Account a WHERE a.email = :email")
+    Account findByEmail(@Param("email") String email);
 }

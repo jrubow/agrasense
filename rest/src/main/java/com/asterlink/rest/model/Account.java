@@ -61,10 +61,11 @@ public class Account {
     // Parameterized constructor: Account creation.
     public Account(String email, String password, String first, String last) {
         this.email = email;
-        this.password = password;
+        this.password = password; // Stores hashed value, 60 characters.
         this.first = first;
         this.last = last;
-        this.lastLogin = LocalDateTime.now();
+        // Set defaults - placeholders.
+        this.lastLogin = LocalDateTime.now(); // TODO consider changing this later.
         this.loginAttempts = 0;
         this.verified = false;
         this.admin = false;
@@ -79,7 +80,7 @@ public class Account {
     // Getters and Setters.
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public long getI() { return id; }
+    public long getId() { return id; }
     public void setId(long id) { this.id = id; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
