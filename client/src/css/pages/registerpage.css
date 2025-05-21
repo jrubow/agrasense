@@ -26,6 +26,11 @@ html, body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+
+    background-image: url("farmland.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .register-form {
