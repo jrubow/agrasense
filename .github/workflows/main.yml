@@ -73,6 +73,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
   
+      - name: Download React build artifact
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: production-file
+          path: client/build
+  
       - name: Copy React build files to Spring Boot static directory
         run: |
           cd $GITHUB_WORKSPACE
