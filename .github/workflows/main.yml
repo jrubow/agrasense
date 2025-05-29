@@ -52,17 +52,17 @@ jobs:
           distribution: 'temurin'
 
       - name: Make mvnw executable
-        run: chmod +x server/rest/mvnw
+        run: chmod +x rest/mvnw
 
       - name: Build Spring Boot project
         run: |
-          cd server/rest
+          cd rest
           ./mvnw clean install -DskipTests
 
       # Optional: Run tests or start the application if needed
       - name: Run Spring Boot app (optional)
         run: |
-          cd server/rest
+          cd rest
           nohup ./mvnw spring-boot:run &
 
   # Deploy React Build to SpringBoot
