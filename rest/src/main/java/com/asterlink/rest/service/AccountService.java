@@ -16,9 +16,16 @@ public interface AccountService {
     // Verify login credentials.
     int checkCredentials(String email, String password);
 
+    // Delete associated account.
+    int deleteAccount(String email, String password);
+
+    /* Shorter, technical methods below. */
+
     // Get next ID number.
     long getNextAccountId();
 
     // Get account by associated email.
     Account getAccountByEmail(String email);
+
+
 }

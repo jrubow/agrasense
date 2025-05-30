@@ -58,17 +58,20 @@ public class AccountServiceImpl implements AccountService {
             return 0;
         }
         return 1;
+    }
 
-        /*
+    // Delete account and supplemental fields. Requires password validation.
+    @Override
+    public int deleteAccount(String email, String password) {
         if (!accountRepository.existsByEmail(email)) {
-            return 1; // Code 1: Email not found.
+            return 1; // Code 1: Email not found. In theory, should never be return if using UI as intended.
         }
         Account account = accountRepository.findByEmail(email);
         if (!BCrypt.checkpw(password, account.getPassword())) {
             return 2; // Code 2: Incorrect password.
         }
+        accountRepository.delete(account); // TODO: Ensure records from supplemental tables also get deleted.
         return 0;
-         */
     }
 
     // Get next account ID.

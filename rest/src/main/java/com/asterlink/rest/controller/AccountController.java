@@ -124,6 +124,7 @@ public class AccountController {
         }
     }
 
+    // Sample code for returning account fields from the token.
     @GetMapping("/details")
     public ResponseEntity<?> getAccountDetails(@AuthenticationPrincipal AccountDetails userDetails) {
         Account a = accountService.getAccountByEmail(userDetails.getUsername());
@@ -133,4 +134,17 @@ public class AccountController {
         return ResponseEntity.ok(a);
     }
 
+    // Delete account. Requires an extra password check.
+    @DeleteMapping()
+    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal AccountDetails userDetails,
+                                           @RequestBody String password) {
+        Account a = accountService.getAccountByEmail(userDetails.getUsername());
+        if (a == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid token.");
+        }
+        if (accountService.deleteAccount(a.getEmail(), password) != 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password.");
+        }
+        return ResponseEntity.ok("Account deleted successfully.");
+    }
 }

@@ -55,8 +55,8 @@ public class Account {
     private boolean admin;
 
     // Associated active subscription on file with the account.
-    @Column(name="network")
-    private int network;
+    @Column(name="network_id")
+    private long network;
 
     // Parameterized constructor: Account creation.
     public Account(String email, String password, String first, String last) {
@@ -96,6 +96,6 @@ public class Account {
     public void setVerified(boolean verified) { this.verified = verified; }
     public boolean isAdmin() { return admin; }
     public void setAdmin(boolean admin) { this.admin = admin; }
-    public int getNetwork() { return network; }
-    public void setNetwork(int network) { this.network = network; }
+    public long getNetwork() { return network; }
+    public void setNetwork(long network) { this.network = network; }
 }

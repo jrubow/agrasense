@@ -11,15 +11,18 @@ export default function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [acceptTerms, setAcceptTerms] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
 
     const validatePassword = (password) => {
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
         return regex.test(password);
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
 
+        // Frontend validation
         if (!firstName || !lastName || !email || !password || !confirmPassword) {
             setError('Please fill out all fields.');
             return;
@@ -43,7 +46,33 @@ export default function RegisterPage() {
         }
 
         setError('');
-        console.log('Registering user:', { firstName, lastName, email, password });
+
+        try {
+            const response = await fetch('http://localhost:8080/api/account/public/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    first: firstName,
+                    last: lastName,
+                    email: email,
+                    password: password,
+                }),
+            });
+
+            const text = await response.text();
+
+            if (response.status === 201) {
+                alert(text);
+                navigate('/login');
+            } else {
+                setError(text);
+            }
+        } catch (err) {
+            console.error('Registration error:', err);
+            setError('Something went wrong. Please try again.');
+        }
     };
 
     return (
@@ -82,12 +111,33 @@ export default function RegisterPage() {
                     />
                     <br />
                     <br />
-                    <input
-                        type="password"
-                        placeholder="Create Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <div style={{ position: "relative" }}>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Create Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            style={{ paddingRight: "80px" }}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                                position: "absolute",
+                                right: "20px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                background: "none",
+                                border: "none",
+                                cursor: "pointer",
+                                fontSize: "0.9em",
+                                textAlign: "center"
+                            }}
+                        >
+                            {showPassword ? "•••" : "abc"}
+                        </button>
+                    </div>
+
                     <input
                         type="password"
                         placeholder="Confirm Password"
