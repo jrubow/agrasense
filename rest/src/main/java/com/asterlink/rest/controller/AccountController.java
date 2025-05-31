@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -113,8 +114,11 @@ public class AccountController {
         // Process login request.
         int result = accountService.checkCredentials(email, password);
         if (result == 0) {
-            // Login success. Send token.
-            return ResponseEntity.ok(jwtService.generateToken(email));
+            // Login success. Send token as JSON.
+            String token = jwtService.generateToken(email);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            return ResponseEntity.ok(response);
         } else if (result == 1 || result == 2) {
             // Email does not exist (1) OR incorrect password (2).
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password.");
@@ -127,7 +131,7 @@ public class AccountController {
     // Sample code for returning account fields from the token.
     @GetMapping("/details")
     public ResponseEntity<?> getAccountDetails(@AuthenticationPrincipal AccountDetails userDetails) {
-        Account a = accountService.getAccountByEmail(userDetails.getUsername());
+        Account a = accountService.getAccountByEmailNoPassword(userDetails.getUsername()); // No password returned.
         if (a == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
         }

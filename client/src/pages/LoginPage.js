@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../css/pages/loginpage.css';
 import {Link, useNavigate} from "react-router-dom";
 
@@ -26,28 +27,33 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:8080/api/account/public/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
+            const response = await axios.post('http://localhost:8080/api/account/public/login', {
+                email,
+                password,
             });
 
-            if (response.ok) {
-                const token = await response.text();
+            const token = response.data.token;
+            if (token) {
                 localStorage.setItem('token', token);
                 navigate('/home');
             } else {
-                const errorMsg = await response.text();
-                setError(errorMsg || 'Incorrect email or password.');
+                setError('Token not received.');
             }
         } catch (err) {
-            setError('Server not reachable.');
+            if (err.response && err.response.data) {
+                setError(
+                    typeof err.response.data === 'string'
+                        ? err.response.data : err.response.data.message || 'Incorrect email or password.'
+                );
+            } else {
+                setError('Incorrect email or password.');
+            }
             console.error('Login error:', err);
         }
-    };
 
+        // TODO: Call /api/account/details with the token to retrieve account parameters.
+
+    };
 
     return (
         <div className="login-container">

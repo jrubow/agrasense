@@ -54,9 +54,9 @@ public class Account {
     @Column(name="admin")
     private boolean admin;
 
-    // Associated active subscription on file with the account.
-    @Column(name="network_id")
-    private long network;
+    // AIf 2FA is used.
+    @Column(name="2fa")
+    private boolean twoFactor;
 
     // Parameterized constructor: Account creation.
     public Account(String email, String password, String first, String last) {
@@ -69,7 +69,7 @@ public class Account {
         this.loginAttempts = 0;
         this.verified = false;
         this.admin = false;
-        this.network = 0;
+        this.twoFactor = false;
     }
 
     // Parameterized constructor: Sending details.
@@ -96,6 +96,6 @@ public class Account {
     public void setVerified(boolean verified) { this.verified = verified; }
     public boolean isAdmin() { return admin; }
     public void setAdmin(boolean admin) { this.admin = admin; }
-    public long getNetwork() { return network; }
-    public void setNetwork(long network) { this.network = network; }
+    public boolean isTwoFactor() { return twoFactor; }
+    public void setTwoFactor(boolean twoFactor) { this.twoFactor = twoFactor; }
 }

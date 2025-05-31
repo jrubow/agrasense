@@ -19,6 +19,8 @@ public interface AccountService {
     // Delete associated account.
     int deleteAccount(String email, String password);
 
+    // TODO: Implement 2FA.
+
     /* Shorter, technical methods below. */
 
     // Get next ID number.
@@ -27,5 +29,6 @@ public interface AccountService {
     // Get account by associated email.
     Account getAccountByEmail(String email);
 
-
+    // Get account by associated email; hide password.
+    Account getAccountByEmailNoPassword(String email);
 }

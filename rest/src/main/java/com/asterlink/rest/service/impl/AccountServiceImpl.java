@@ -86,4 +86,12 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByEmail(email);
     }
 
+    // Find account by associated email. Hide password.
+    @Override
+    public Account getAccountByEmailNoPassword(String email) {
+        Account a = accountRepository.findByEmail(email);
+        a.setPassword(null);
+        return a;
+    }
+
 }
