@@ -5,6 +5,8 @@ import NavBar from "./components/NavBar";
 import DevicePage from "./pages/DevicePage"
 import MapPage from "./pages/MapPage"
 import LandingPage from "./pages/LandingPage"
+import Newsroom from "./pages/Newsroom"
+import ArticlePage from "./pages/ArticlePage"
 
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
             <Route path="/device" element={<DevicePage/>}/>
             <Route path="/deploy" element={<DeployPage />} />
             <Route path="/map" element={<MapPage/>}/>
+            <Route path="/newsroom" element={<Newsroom/>}/>
+             <Route path="/newsroom/:articleSlug" element={<ArticlePage />} />
           </Routes>
       </BrowserRouter>
   )

@@ -5,7 +5,7 @@ import axios from "axios"
 import "../css/pages/mappage.css"
 
 const MapPage = () => {
-  const [map, setMap] = useState(null);
+  const [map, setMap] = useState(null)
   const [devices, setDevices] = useState([])
   const [userLocation, setUserLocation] = useState(null)
   const [activeMarker, setActiveMarker] = useState(null)
