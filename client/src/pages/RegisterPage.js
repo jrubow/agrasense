@@ -48,7 +48,7 @@ export default function RegisterPage() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:8080/api/account/public/register', {
+            const response = await fetch('/api/account/public/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,16 +101,12 @@ export default function RegisterPage() {
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                     />
-                    <br />
-                    <br />
                     <input
                         type="email"
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <br />
-                    <br />
                     <div style={{ position: "relative" }}>
                         <input
                             type={showPassword ? "text" : "password"}
@@ -156,7 +152,6 @@ export default function RegisterPage() {
                         I accept <a href="/terms" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
                     </label>
                 </div>
-                <br />
                 <button className="register-button">
                     Register
                 </button>

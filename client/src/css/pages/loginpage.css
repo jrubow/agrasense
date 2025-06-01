@@ -29,6 +29,11 @@ html, body {
 
 }
 
+.login-container input {
+    margin: 0px !important;
+    margin-top: 10px !important;
+}
+
 .login-form {
     background: white;
     padding: 20px;

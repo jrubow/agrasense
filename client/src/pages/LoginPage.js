@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../css/pages/loginpage.css';
 import {Link, useNavigate} from "react-router-dom";
+import { useUser } from '../context/UserContext';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -9,7 +10,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-
+    const { user, setUser, loggedIn, setLoggedIn } = useUser();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -27,7 +28,7 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const response = await axios.post('http://localhost:8080/api/account/public/login', {
+            const response = await axios.post('/api/account/public/login', {
                 email,
                 password,
             });
@@ -39,6 +40,14 @@ export default function LoginPage() {
             } else {
                 setError('Token not received.');
             }
+
+            const detailsResponse = await axios.get("/api/account/details", {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            setUser(user => detailsResponse.data)
+
         } catch (err) {
             if (err.response && err.response.data) {
                 setError(
