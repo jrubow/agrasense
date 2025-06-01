@@ -42,10 +42,10 @@ public class Article {
     @Column(name="author_id")
     private Integer authorId;
 
-    @Column(name="published_at", nullable = false)
-    private LocalDateTime publishedAt;
+    @Column(name="published_timestamp", nullable = false)
+    private LocalDateTime publishedTimestamp;
 
-    @Column(name="updated_at")
+    @Column(name="updated_timestamp")
     private LocalDateTime updatedTimestamp;
 
     @Column(name="is_published", nullable = false)
@@ -65,13 +65,13 @@ public class Article {
     }
 
     public Article(String title, String slug, String summary, String content, Integer authorId,
-                   LocalDateTime publishedAt, boolean isPublished, String category, List<String> tags) {
+                   LocalDateTime publishedTimestamp, boolean isPublished, String category, List<String> tags) {
         this.title = title;
         this.slug = slug;
         this.summary = summary;
         this.content = content;
         this.authorId = authorId;
-        this.publishedAt = publishedAt;
+        this.publishedTimestamp = publishedTimestamp;
         this.isPublished = isPublished;
         this.category = category;
         this.tags = tags;
@@ -126,12 +126,12 @@ public class Article {
         this.authorId = authorId;
     }
 
-    public LocalDateTime getPublishedAt() {
-        return publishedAt;
+    public LocalDateTime getpublishedTimestamp() {
+        return publishedTimestamp;
     }
 
-    public void setPublishedAt(LocalDateTime publishedAt) {
-        this.publishedAt = publishedAt;
+    public void setpublishedTimestamp(LocalDateTime publishedTimestamp) {
+        this.publishedTimestamp = publishedTimestamp;
     }
 
     public LocalDateTime getUpdatedTimestamp() {
@@ -181,7 +181,7 @@ public class Article {
                ", title='" + title + '\'' +
                ", slug='" + slug + '\'' +
                ", summary='" + summary + '\'' +
-               ", publishedAt=" + publishedAt +
+               ", publishedTimestamp=" + publishedTimestamp +
                ", isPublished=" + isPublished +
                '}';
     }
