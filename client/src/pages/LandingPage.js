@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IoIosWater } from "react-icons/io";
 import { FaArrowsRotate, FaArrowTrendUp } from "react-icons/fa6";
 import { FaSolarPanel, FaTools, FaTemperatureHigh, FaWifi, FaSun, FaPlug } from "react-icons/fa"
@@ -9,6 +9,8 @@ import { WiHumidity } from "react-icons/wi"
 import "../css/pages/landingpage.css"
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="landingpage-container">
       <header className="landingpage-header">
@@ -22,7 +24,7 @@ export default function LandingPage() {
           <p style={{fontSize:"18.5px"}}>
             Cut costs and farm smarter with real-time, affordable field insights.
           </p>
-          {/* Add a call-to-action button if you like */}
+          <button className="landing-button" onClick={() => navigate("/register")}>Get Started Now!</button>
         </div>
         <div className="landingpage-hero-image">
           <div className="landingpage-hero-image-img">

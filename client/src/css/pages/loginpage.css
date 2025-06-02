@@ -1,0 +1,128 @@
+:root {
+    --primary-color:#1d7933ff;
+    --secondary-green:rgb(22, 87, 37);
+    --light-gray: #f5f5f5;
+    --dark-gray: #333;
+    --font-stack: 'Helvetica Neue', Arial, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-stack);
+    text-align: left;
+    
+}
+
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    background-image: url("farmland.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+}
+
+.login-container input {
+    margin: 0px !important;
+    margin-top: 10px !important;
+}
+
+.login-form {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-button:hover {
+    background-color: var(--secondary-green);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.error-text {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.logo-header {
+    text-align: center;
+}
+
+.bottom-buttons {
+    display: flex;
+    flex-direction: row;
+    padding-top: 20px;
+}
+
+.bottom-button {
+    width: 100%;
+    text-align: center;
+    height: 40px;
+    background-color: white;
+    border-radius: 6px;
+    border-color: var(--secondary-green);
+    color: var(--secondary-green);
+    margin: 5px;
+    border-width: 1px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-button:hover {
+    width: 50%;
+    text-align: center;
+    height: 40px;
+    background-color: var(--secondary-green);
+    border-radius: 6px;
+    border-color: var(--secondary-green);
+    color: white;
+    border-width: 1px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
