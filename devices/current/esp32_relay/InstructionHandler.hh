@@ -16,7 +16,8 @@
 
 class InstructionHandler {
 public:
-    InstructionHandler(struct timeval &tvRef, uint64_t &deviceIdRef, uint64_t &sentinelIdRef, Preferences &preferencesRef, int (*activateRef)(), painlessMesh &meshRef, unsigned char &stateRef);
+    InstructionHandler(struct timeval &tvRef, uint64_t &deviceIdRef, uint64_t &sentinelIdRef, Preferences &preferencesRef,
+                        int (*activateRef)(), painlessMesh &meshRef, unsigned char &stateRef, void (*logRef)(const char *));
 
     const StaticJsonDocument<200> * getInstruction() const;
     int executeInstruction(const std::string &json);
@@ -33,6 +34,7 @@ private:
     int (*activate)();
     painlessMesh &mesh;
     unsigned char &state;
+    void (*log)(const char *message);
 };
 
 #endif

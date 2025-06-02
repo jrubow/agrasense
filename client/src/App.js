@@ -10,6 +10,8 @@ import LandingPage from "./pages/LandingPage"
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from './components/ProtectedRoute';
+import Newsroom from "./pages/Newsroom"
+import ArticlePage from "./pages/ArticlePage"
 
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
                         </div>
                     }
           />
+            <Route path="/newsroom" element={<Newsroom/>}/>
+             <Route path="/newsroom/:articleSlug" element={<ArticlePage />} />
           </Routes>
       </BrowserRouter>
     </UserProvider>

@@ -5,6 +5,9 @@
 #include <ArduinoJson.h>
 #include <sys/time.h>
 #include "InstructionHandler.hh"
+#include "FS.h"
+#include <SD_MMC.h>
+#include "SPI.h"
 
 #define DEBUG
 
@@ -30,10 +33,11 @@ uint64_t deviceId;
 void updateLEDStatus();
 int activate();
 int initialize();
+void log(const char *message);
 
 // Initialize sensors and mesh
 painlessMesh mesh;
-InstructionHandler instructions(tv, deviceId, sentinelId, preferences, activate, mesh, state);
+InstructionHandler instructions(tv, deviceId, sentinelId, preferences, activate, mesh, state, log);
 
 
 
@@ -47,6 +51,23 @@ void updateLEDStatus() {
   } else {
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));
   }
+}
+
+void log(const char *message) {
+  if (!SD_MMC.begin()) {
+    Serial.println("SD Card Mount Failed");
+    return;
+  }
+
+  File logFile = SD_MMC.open("/log.txt", FILE_APPEND);
+  if (!logFile) {
+    Serial.println("Failed to open log file");
+    return;
+  }
+
+  logFile.println(message);
+  logFile.close();
+  Serial.println("Log written");
 }
 
 void receivedCallback(uint64_t from, String &msg) {
