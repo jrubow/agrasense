@@ -12,6 +12,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from './components/ProtectedRoute';
 import Newsroom from "./pages/Newsroom"
 import ArticlePage from "./pages/ArticlePage"
+import AdminNewsroom from "./pages/AdminNewsroom";
 
 
 function App() {
@@ -43,7 +44,8 @@ function App() {
                     }
           />
             <Route path="/newsroom" element={<Newsroom/>}/>
-             <Route path="/newsroom/:articleSlug" element={<ArticlePage />} />
+             <Route path="/article/:slug" element={<ArticlePage />} />
+             <Route path="/admin/newsroom" element={<AdminNewsroom />} />
           </Routes>
       </BrowserRouter>
     </UserProvider>

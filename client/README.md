@@ -1,70 +1,36 @@
-# Getting Started with Create React App
+# AgraSense - Smart Farms, Smart Agriculture | Smart Agriculture, Smarter Decisions
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Mesh Sensor Network for Agriculture
 
-## Available Scripts
+Smart, scalable field monitoring using low-power WiFi & LoRa Mesh nodes and ESP32 microcontrollers.
 
-In the project directory, you can run:
+## Overview
 
-### `npm start`
+This project uses a WiFi & LoRa Mesh Network to collect real-time environmental data (temperature, humidity, soil moisture, and light) across farmland and natural preserves. Sensor nodes relay information wirelessly through a self-healing mesh to a central Wi-Fi-connected provisioner node.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Problem Statement
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Premise
+As sensor technology becomes more advanced, the cost for wide scale sensors has risen exponentially. Farmers, firefighters, environmental scientists and others are faced with an increasing cost to data ratio as wide scale sensing has become more and more expensive. There is an enormous need for these essential workers to have easy and quick access to data that traverses thousands of acres of land. Current sensors do not allow for large scale data analytics and therefore this leaves a large gap in the market that we want to fulfill. 
 
-### `npm test`
+### Solution
+We are creating a low cost sensor alternative to high cost sensors in the agriculture and environmental communities. These sensors will use WIFI-mesh technology to communicate data over large distances without need for connection to internet services. A sentinel node will serve as a liaison between the sensors and the database. It will then transfer the data for data analysis.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Project Objectives
 
-### `npm run build`
+### Sensor Devices & Mesh Technology
+The sensor mesh will serve to communicate information between all sensor devices without need for connection to the internet or use of a SIM card for each device. There will be two types of devices, sentinel devices and relay devices. Sentinel devices are responsible for communicating all data from the devices to the internet either via a SIM card or a WiFi connection. The relay devices will communicate sensor data via other relay devices to the sentinel device. This mesh of devices will be scalable, self healing and decentralized.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Communication Dashboard
+Users will be able to communicate instructions to the devices via an intuitive web dashboard. Also, users will be able to view real time sensor data as well as view and download old data for analysis from the dashboard. Importantly the dashboard will 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Deployment Aides
+Users will have access to multiple deployment aides. When deciding where to deploy devices users will be able to use a machine learning model which will accurately predict the optimal placement of the devices in the field, for the strongest connectivity and sensor readings. Users can choose the radius for each device with the maximum value around 220 m. This can also be modified to fit each field’s specifications.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Features
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Mesh for decentralized, reliable communication
+- Low-power ESP32 nodes using deep sleep for extended battery life
+- Sensor Suite: DHT122, soil moisture, light sensors, pH sensor,
+- Provisioner Node connects to Wi-Fi and sends data to the cloud
+- Low Cost
