@@ -74,6 +74,35 @@ public class AccountServiceImpl implements AccountService {
         return 0;
     }
 
+    // Update user's display name.
+    @Override
+    public int updateName(String email, String firstName, String lastName) {
+        if (!accountRepository.existsByEmail(email)) {
+            return 1; // Code 1: Email not found. In theory, should never be return if using UI as intended.
+        }
+        Account account = accountRepository.findByEmail(email);
+        account.setFirst(firstName);
+        account.setLast(lastName);
+        accountRepository.save(account);
+        return 0;
+    }
+
+    // Update user's password.
+    @Override
+    public int updatePassword(String email, String currentPassword, String newPassword) {
+        if (!accountRepository.existsByEmail(email)) {
+            return 1; // Code 1: Email not found. In theory, should never be return if using UI as intended.
+        }
+        Account account = accountRepository.findByEmail(email);
+        if (!BCrypt.checkpw(currentPassword, account.getPassword())) {
+            return 2; // Code 2: Incorrect password.
+        }
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt(12)); // Always a 60-char string.
+        account.setPassword(hashedPassword);
+        accountRepository.save(account);
+        return 0;
+    }
+
     // Get next account ID.
     @Override
     public long getNextAccountId() {

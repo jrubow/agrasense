@@ -19,6 +19,12 @@ public interface AccountService {
     // Delete associated account.
     int deleteAccount(String email, String password);
 
+    // Update user's display name.
+    int updateName(String email, String firstName, String lastName);
+
+    // Update user's password.
+    int updatePassword(String email, String currentPassword, String newPassword);
+
     // TODO: Implement 2FA.
 
     /* Shorter, technical methods below. */

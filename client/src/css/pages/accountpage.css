@@ -1,0 +1,187 @@
+:root {
+    --primary-color:#1d7933ff;
+    --secondary-green:rgb(22, 87, 37);
+    --light-gray: #f5f5f5;
+    --dark-gray: #333;
+    --font-stack: 'Helvetica Neue', Arial, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-stack);
+    text-align: left;
+
+}
+
+
+
+.account-button {
+    width: 200px;
+    text-align: center;
+    height: 40px;
+    background-color: white;
+    border-radius: 6px;
+    border-color: var(--secondary-green);
+    color: var(--secondary-green);
+    margin: 5px;
+    border-width: 1px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.account-button:hover {
+    width: 200px;
+    text-align: center;
+    height: 40px;
+    background-color: var(--secondary-green);
+    border-radius: 6px;
+    border-color: var(--secondary-green);
+    color: white;
+    border-width: 1px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.delete-account-button {
+    width: 200px;
+    text-align: center;
+    height: 40px;
+    background-color: white;
+    border-radius: 6px;
+    border-color: red;
+    color: red;
+    margin: 5px;
+    border-width: 1px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.delete-account-button:hover {
+    width: 200px;
+    text-align: center;
+    height: 40px;
+    background-color: red;
+    border-radius: 6px;
+    border-color: red;
+    color: white;
+    border-width: 1px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.settings-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    background-image: url("farmland.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    overflow: auto;
+}
+
+.settings-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 600px;
+    height: 80%;
+    max-height: 900px;
+    overflow: scroll;
+}
+
+.setting-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    margin-left: 20px;
+}
+
+.text-input {
+    margin-left: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 200px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.settings-header {
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 260px;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    animation: popIn 0.2s ease-out;
+    align-content: center;
+    text-align: center;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        background: rgba(0, 0, 0, 0);
+    }
+    to {
+        background: rgba(0, 0, 0, 0.5);
+    }
+}
+
+.modal-input {
+    width: 200px;
+    padding: 12px;
+    margin: 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
