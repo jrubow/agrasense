@@ -40,7 +40,7 @@ public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, 
     @Modifying
     @Transactional
     @Query("UPDATE SentinelDevice r SET r.deployed = :deployed WHERE r.deviceId = :deviceId")
-    void setDeployedStatus(@Param("deviceId") Long deviceId, @Param("currentDateTime") boolean deployed);
+    void setDeployedStatus(@Param("deviceId") Long deviceId, @Param("deployed") boolean deployed);
 
     @Modifying
     @Transactional
