@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 /**
  * Controller for Articles
@@ -61,6 +62,12 @@ public class ArticleController {
         if (!isValidAdminPassword(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        // Set the publishedTimestamp if it's missing
+        if (article.getPublishedTimestamp() == null) {
+            article.setPublishedTimestamp(LocalDateTime.now());
+        }
+
         Article createdArticle = articleService.createArticle(article);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdArticle);
     }

@@ -54,12 +54,21 @@ public class ArticleServiceImpl implements ArticleService {
             existingArticle.setTitle(article.getTitle());
             existingArticle.setContent(article.getContent());
             existingArticle.setSlug(article.getSlug());
+            existingArticle.setSummary(article.getSummary());
+            existingArticle.setCategory(article.getCategory());
+            existingArticle.setTags(article.getTags());
+            existingArticle.setViewsCount(article.getViewsCount());
+            existingArticle.setAuthorId(article.getAuthorId());
+            existingArticle.setPublished(article.isPublished());
+            existingArticle.setPublishedTimestamp(article.getPublishedTimestamp());
+            existingArticle.setUpdatedTimestamp(article.getUpdatedTimestamp());
 
             return articleRepository.save(existingArticle);
         } else {
             throw new RuntimeException("Article not found with ID: " + article.getId());
         }
     }
+
 
     @Override
     @Transactional
