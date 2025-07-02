@@ -57,6 +57,15 @@ public class AccountController {
             return ResponseEntity.badRequest().body("Last name must be 32 characters or less.");
         }
 
+        // Only allow letters, apostrophes, hyphens, and periods.
+        String namePattern = "^[a-zA-Z'\\-\\. ]+$";
+        if (!first.matches(namePattern)) {
+            return ResponseEntity.badRequest().body("First name contains invalid characters.");
+        }
+        if (!last.matches(namePattern)) {
+            return ResponseEntity.badRequest().body("Last name contains invalid characters.");
+        }
+
         // Validate email format.
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
             return ResponseEntity.badRequest().body("Invalid email address.");
@@ -139,7 +148,7 @@ public class AccountController {
     }
 
     // Delete account. Requires an extra password check.
-    @DeleteMapping()
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal AccountDetails userDetails,
                                            @RequestBody String password) {
         Account a = accountService.getAccountByEmail(userDetails.getUsername());
@@ -150,5 +159,79 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password.");
         }
         return ResponseEntity.ok("Account deleted successfully.");
+    }
+
+    // Update account fields with the new data by parsing the request JSON.
+    @PostMapping("/update")
+    public ResponseEntity<?> updateAccountDetails(@AuthenticationPrincipal AccountDetails userDetails,
+                                                  @RequestBody Map<String, String> request) {
+        Account a = accountService.getAccountByEmail(userDetails.getUsername());
+        if (a == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid token.");
+        }
+
+        String type = request.get("type");
+
+        if ("password".equals(type)) {
+            String currPassword = request.get("currPassword");
+            String newPassword = request.get("newPassword");
+
+            // Safety check.
+            if (currPassword == null || newPassword == null) {
+                return ResponseEntity.badRequest().body("Missing password fields.");
+            }
+
+            // Validate password maximum length.
+            if (newPassword.length() > 64) {
+                return ResponseEntity.badRequest().body("Password must be 64 characters or less.");
+            }
+
+            // Validate password strength.
+            if (!newPassword.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$")) {
+                return ResponseEntity.badRequest().body("Password must be at least 8 characters and include at least " +
+                        "one number, one special character, one uppercase letter, and one lowercase letter.");
+            }
+
+            int result = accountService.updatePassword(a.getEmail(), currPassword, newPassword);
+
+            if (result != 0) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect.");
+            }
+            return ResponseEntity.ok("Password updated successfully.");
+        } else if ("name".equals(type)) {
+            String first = request.get("first");
+            String last = request.get("last");
+
+            // Safety check.
+            if (first == null || last == null) {
+                return ResponseEntity.badRequest().body("Missing name fields.");
+            }
+
+            // Check length of first and last name.
+            if (first.length() > 32) {
+                return ResponseEntity.badRequest().body("First name must be 32 characters or less.");
+            }
+
+            if (last.length() > 32) {
+                return ResponseEntity.badRequest().body("Last name must be 32 characters or less.");
+            }
+
+            // Only allow letters, apostrophes, hyphens, and periods.
+            String namePattern = "^[a-zA-Z'\\-\\. ]+$";
+            if (!first.matches(namePattern)) {
+                return ResponseEntity.badRequest().body("First name contains invalid characters.");
+            }
+            if (!last.matches(namePattern)) {
+                return ResponseEntity.badRequest().body("Last name contains invalid characters.");
+            }
+
+            int result = accountService.updateName(a.getEmail(), first, last);
+            if (result != 0) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Account not found.");
+            }
+            return ResponseEntity.ok("Name updated successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid update type.");
+        }
     }
 }

@@ -12,7 +12,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from './components/ProtectedRoute';
 import Newsroom from "./pages/Newsroom"
 import ArticlePage from "./pages/ArticlePage"
-
+import AccountPage from "./pages/AccountPage";
 
 function App() {
   return (
@@ -28,6 +28,8 @@ function App() {
             <Route path="/map" element={<MapPage/>}/>
             <Route path="/login" element={<LoginPage/>}/>
             <Route path="/register" element={<RegisterPage/>}/>
+            <Route path="/account" element={//<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+                <AccountPage/>}/>
             <Route path="/terms"
                     element={
                         <div>

@@ -191,6 +191,10 @@ const Homepage = () => {
     setDaysAgo(Number(event.target.value));
   };
 
+  const goToAccount = () => {
+    navigate('/account');
+  };
+
   return (
     <div className="homepage-container">
       <section className="homepage-sidebar-section"> 
@@ -199,7 +203,9 @@ const Homepage = () => {
           <li>Analytics</li>
           <li>Devices</li>
           <li>Field Blocks</li>
-          <li>My Account</li>
+          <li onClick={goToAccount}>
+            My Account
+          </li>
         </ul>
       </section>
       <div className="homepage-right-section">

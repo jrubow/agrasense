@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.a2324d32.css",
-    "main.js": "/static/js/main.f2e9ef45.js",
+    "main.css": "/static/css/main.a82e35a1.css",
+    "main.js": "/static/js/main.53c2b87e.js",
     "static/media/farmland.png": "/static/media/farmland.c874d350b7ba7c8377f8.png",
     "index.html": "/index.html",
-    "main.a2324d32.css.map": "/static/css/main.a2324d32.css.map",
-    "main.f2e9ef45.js.map": "/static/js/main.f2e9ef45.js.map"
+    "main.a82e35a1.css.map": "/static/css/main.a82e35a1.css.map",
+    "main.53c2b87e.js.map": "/static/js/main.53c2b87e.js.map"
   },
   "entrypoints": [
-    "static/css/main.a2324d32.css",
-    "static/js/main.f2e9ef45.js"
+    "static/css/main.a82e35a1.css",
+    "static/js/main.53c2b87e.js"
   ]
 }
