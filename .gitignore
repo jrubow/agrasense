@@ -1,2 +1,6 @@
 .idea/
 ./rest/env.properties
+./node_modules/
+./.vscode/
+./package.json
+./package-lock.json
