@@ -9,77 +9,88 @@ on:
       - main
 
 jobs:
-  # Build React  
-  build-react:
+  build-and-package:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4.2.2
 
-      - name: Install Node
+      - name: Install Node.js (for React)
         uses: actions/setup-node@v4.3.0
         with:
           node-version: 18.x
 
-      - name: Install Dependencies
+      - name: Install React Dependencies
         run: |
+          # Navigate to the client directory
           cd client
+          # Install npm packages
           npm install
 
-      - name: Build Project
+      - name: Build React Project
         run: |
+          # Navigate to the client directory
           cd client
+          # Build the React application for production
+          # CI=false is often used to prevent warnings from being treated as errors in CI environments
           CI=false npm run build
 
-      - name: Upload React build artifact
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: production-file
-          path: ./client/build
+      - name: Copy React build files to Spring Boot static directory
+        run: |
+          # Navigate to the root of the repository
+          cd $GITHUB_WORKSPACE
+          # Create the target directory if it doesn't exist
+          mkdir -p ./rest/src/main/resources/static/
+          # Copy all files and directories from React's build output to Spring Boot's static resources
+          cp -r ./client/build/* ./rest/src/main/resources/static/
 
-  # Build & Test Spring Boot
-  build-springboot:
-    runs-on: ubuntu-latest
-    needs: build-react
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4.2.2
-
-      - name: Set up JDK
+      - name: Set up JDK (for Spring Boot)
         uses: actions/setup-java@v4.7.0
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Make mvnw executable
-        run: chmod +x rest/mvnw
-
-      - name: Build Spring Boot project
         run: |
+          # Ensure the Maven wrapper script is executable
+          chmod +x rest/mvnw
+
+      - name: Build and Package Spring Boot project (with React files)
+        run: |
+          # Navigate to the rest (Spring Boot) directory
           cd rest
+          # Clean, compile, and package the Spring Boot application into a JAR
+          # -DskipTests is used to skip running tests during the build
           ./mvnw clean install -DskipTests
 
-      # Optional: Run tests or start the application if needed
-      - name: Run Spring Boot app (optional)
-        run: |
-          cd rest
-          nohup ./mvnw spring-boot:run &
+      - name: Upload Spring Boot JAR artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: spring-boot-app
+          path: ./rest/target/*.jar
 
-  # Deploy React Build to SpringBoot
-  deploy-react-build:
+  deploy-to-azure-vm:
     runs-on: ubuntu-latest
-    needs: build-react
+    needs: build-and-package
+    environment: production
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.2
-      
-      - name: Download React build artifact
+      - name: Download Spring Boot JAR artifact
         uses: actions/download-artifact@v4.1.4
         with:
-          name: production-file
-          path: client/build
-      
-      - name: Copy React build files to Spring Boot static directory
-        run: |
-          cd $GITHUB_WORKSPACE
-          cp -r ./client/build/* ./rest/src/main/resources/static/
+          name: spring-boot-app
+          path: ./
+
+      - name: Deploy to Azure VM via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USERNAME }}
+          key: ${{ secrets.AZURE_VM_SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.AZURE_VM_TARGET_DIR }}
+            sudo systemctl stop springboot.service
+            rm -f ${{ secrets.SPRING_BOOT_JAR_NAME }}
+            mv $GITHUB_WORKSPACE/${{ secrets.SPRING_BOOT_JAR_NAME }} ./${{ secrets.SPRING_BOOT_JAR_NAME }}
+            sudo systemctl start springboot.service
+            echo "Deployment complete. Check application logs on VM."
+
