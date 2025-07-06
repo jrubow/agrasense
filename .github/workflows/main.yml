@@ -86,11 +86,11 @@ jobs:
           host: ${{ secrets.AZURE_VM_HOST }}
           username: ${{ secrets.AZURE_VM_USERNAME }}
           key: ${{ secrets.AZURE_VM_SSH_PRIVATE_KEY }}
+          source: ./${{ secrets.SPRING_BOOT_JAR_NAME }}
+          target: ${{ secrets.AZURE_VM_TARGET_DIR }}
           script: |
             cd ${{ secrets.AZURE_VM_TARGET_DIR }}
             sudo systemctl stop springboot.service
-            rm -f ${{ secrets.SPRING_BOOT_JAR_NAME }}
-            mv $GITHUB_WORKSPACE/${{ secrets.SPRING_BOOT_JAR_NAME }} ./${{ secrets.SPRING_BOOT_JAR_NAME }}
             sudo systemctl start springboot.service
             echo "Deployment complete. Check application logs on VM."
 
