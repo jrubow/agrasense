@@ -39,4 +39,26 @@ public class SubscriptionCatalog {
 
     // Default constructor
     public SubscriptionCatalog() {}
+
+    // Getters and Setters
+    public int getTierId() { return tierId; }
+    public void setTierId(int tierId) { this.tierId = tierId; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public int getDevicesLimit() { return devicesLimit; }
+    public void setDevicesLimit(int devicesLimit) { this.devicesLimit = devicesLimit; }
+
+    public float getPrice() { return price; }
+    public void setPrice(float price) { this.price = price; }
+
+    public int getRenewalPeriodDays() { return renewalPeriodDays; }
+    public void setRenewalPeriodDays(int renewalPeriodDays) { this.renewalPeriodDays = renewalPeriodDays; }
+
+    public int getTotalBillingCycles() { return totalBillingCycles; }
+    public void setTotalBillingCycles(int totalBillingCycles) { this.totalBillingCycles = totalBillingCycles; }
 }

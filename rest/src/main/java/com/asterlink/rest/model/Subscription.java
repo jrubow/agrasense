@@ -57,4 +57,35 @@ public class Subscription {
     // Parameterized constructor.
 
 
+    // Getters and setters.
+    public long getSubscriptionId() { return subscriptionId; }
+    public void setSubscriptionId(long subscriptionId) { this.subscriptionId = subscriptionId; }
+
+    public Account getAccount() { return account; }
+    public void setAccount(Account account) { this.account = account; }
+
+    public SubscriptionCatalog getTier() { return tier; }
+    public void setTier(SubscriptionCatalog tier) { this.tier = tier; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public String getPrimaryAddress() { return primaryAddress; }
+    public void setPrimaryAddress(String primaryAddress) { this.primaryAddress = primaryAddress; }
+
+    public LocalDateTime getStartDate() { return startDate; }
+    public void setStartDate(LocalDateTime startDate) { this.startDate = startDate; }
+
+    public int getBillingCyclesRemaining() { return billingCyclesRemaining; }
+    public void setBillingCyclesRemaining(int billingCyclesRemaining) { this.billingCyclesRemaining = billingCyclesRemaining; }
+
+    public float getTotalCharged() { return totalCharged; }
+    public void setTotalCharged(float totalCharged) { this.totalCharged = totalCharged; }
+
+    public List<String> getSentinelId() { return sentinelId; }
+    public void setSentinelId(List<String> sentinelId) { this.sentinelId = sentinelId; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+
 }
