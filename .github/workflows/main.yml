@@ -95,7 +95,7 @@ jobs:
           echo "jar_full_path=$(pwd)/$JAR_FILE" >> "$GITHUB_OUTPUT"
 
       - name: Copy JAR to Azure VM
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/scp-action@v1.0.3
         with:
           host: ${{ secrets.AZURE_VM_HOST }}
           username: ${{ secrets.AZURE_VM_USERNAME }}
