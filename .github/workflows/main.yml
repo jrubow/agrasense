@@ -79,7 +79,6 @@ jobs:
           name: spring-boot-app
           path: ./
         # This will download the JAR into the root of the current runner's workspace.
-        # Example: if the artifact was 'my-app-0.0.1-SNAPSHOT.jar', it will be at './my-app-0.0.1-SNAPSHOT.jar'
 
       - name: Set JAR filename and full path
         id: get_jar_name
@@ -90,33 +89,10 @@ jobs:
             echo "Error: No JAR file found after downloading artifact in $(pwd)."
             exit 1
           fi
-          echo "Detected JAR file: $JAR_FILE"
           # Output just the filename
           echo "jar_name=$(basename $JAR_FILE)" >> $GITHUB_OUTPUT
           # Output the full path of the JAR on the GitHub Actions runner
           echo "jar_full_path=$(pwd)/$JAR_FILE" >> $GITHUB_OUTPUT
-          echo "Full path of JAR on runner: $(pwd)/$JAR_FILE"
-
-
-      - name: Debugging - Verify JAR file on runner
-        run: |
-          echo "--- Debugging JAR File Presence ---"
-          echo "Current working directory on runner: $(pwd)"
-          echo "Files in current directory:"
-          ls -lA .
-          echo "Value of jar_name: ${{ steps.get_jar_name.outputs.jar_name }}"
-          echo "Value of jar_full_path: ${{ steps.get_jar_name.outputs.jar_full_path }}"
-
-          if [ -f "${{ steps.get_jar_name.outputs.jar_full_path }}" ]; then
-            echo "SUCCESS: JAR file '${{ steps.get_jar_name.outputs.jar_full_path }}' IS found on the runner."
-            ls -lh "${{ steps.get_jar_name.outputs.jar_full_path }}"
-          else
-            echo "ERROR: JAR file '${{ steps.get_jar_name.outputs.jar_full_path }}' IS NOT found on the runner."
-            echo "This indicates the 'Download Spring Boot JAR artifact' step might have failed or downloaded it elsewhere."
-            exit 1
-          fi
-          echo "--- End Debugging ---"
-
 
       - name: Deploy to Azure VM via SSH and SCP
         uses: appleboy/ssh-action@v1.0.3
@@ -124,60 +100,36 @@ jobs:
           host: ${{ secrets.AZURE_VM_HOST }}
           username: ${{ secrets.AZURE_VM_USERNAME }}
           key: ${{ secrets.AZURE_VM_SSH_PRIVATE_KEY }}
+          # Use source and target parameters for direct SCP transfer
+          source: ${{ steps.get_jar_name.outputs.jar_full_path }}
+          target: ${{ secrets.AZURE_VM_TARGET_DIR }}/${{ steps.get_jar_name.outputs.jar_name }}
           script: |
             set -e # Exit immediately if a command exits with a non-zero status.
 
-            # Retrieve variables from GitHub Actions outputs
-            JAR_NAME_ON_RUNNER="${{ steps.get_jar_name.outputs.jar_name }}"
-            JAR_FULL_PATH_ON_RUNNER="${{ steps.get_jar_name.outputs.jar_full_path }}"
             TARGET_DIR_ON_VM="${{ secrets.AZURE_VM_TARGET_DIR }}"
+            JAR_NAME_ON_VM="${{ steps.get_jar_name.outputs.jar_name }}"
             SERVICE_NAME="springboot.service" # Or whatever your systemd service is named
 
-            echo "Starting deployment to Azure VM..."
+            echo "Starting deployment on Azure VM..."
             echo "Target directory on VM: $TARGET_DIR_ON_VM"
-            echo "JAR file to deploy (on VM): $JAR_NAME_ON_RUNNER"
-            echo "Full path of JAR on GitHub Runner (source for SCP): $JAR_FULL_PATH_ON_RUNNER"
+            echo "JAR file deployed: $TARGET_DIR_ON_VM/$JAR_NAME_ON_VM"
 
-            # Check if the target directory exists on VM, create if not
-            echo "Checking if target directory '$TARGET_DIR_ON_VM' exists on VM..."
-            # Use a separate SSH command for this to ensure it runs on the VM
-            if ! ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} "[ -d \"$TARGET_DIR_ON_VM\" ]"; then
-              echo "Target directory $TARGET_DIR_ON_VM does not exist on VM. Creating it."
-              ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} "mkdir -p \"$TARGET_DIR_ON_VM\""
-            else
-              echo "Target directory $TARGET_DIR_ON_VM already exists on VM."
-            fi
+            # Ensure the target directory exists on the VM
+            echo "Ensuring target directory '$TARGET_DIR_ON_VM' exists on VM..."
+            mkdir -p "$TARGET_DIR_ON_VM"
+            echo "Target directory $TARGET_DIR_ON_VM ensured."
 
-            echo "Copying JAR file from GitHub Runner to VM using SCP..."
-            # The scp command is run from the GitHub Actions runner's context
-            # It needs the full path to the source file on the runner.
-            scp -o StrictHostKeyChecking=no "$JAR_FULL_PATH_ON_RUNNER" "${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:$TARGET_DIR_ON_VM/$JAR_NAME_ON_RUNNER"
-            echo "JAR file copied successfully to $TARGET_DIR_ON_VM/$JAR_NAME_ON_RUNNER on VM."
+            echo "Stopping existing Spring Boot service ($SERVICE_NAME)..."
+            # Use '|| true' to prevent script from failing if service isn't running
+            sudo systemctl stop "$SERVICE_NAME" || echo "Service $SERVICE_NAME was not running or failed to stop, continuing..."
 
-            echo "Executing commands on Azure VM to manage service..."
-            # Now, execute the remote commands via SSH using a here-document
-            ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} << 'EOF'
-              set -e
-              # Re-declare variables for the remote script context
-              TARGET_DIR_ON_VM_REMOTE="$TARGET_DIR_ON_VM"
-              JAR_NAME_ON_VM_REMOTE="$JAR_NAME_ON_RUNNER"
-              SERVICE_NAME_ON_VM_REMOTE="$SERVICE_NAME"
+            echo "Starting Spring Boot service ($SERVICE_NAME)..."
+            sudo systemctl start "$SERVICE_NAME"
+            echo "Service start command issued. Checking status..."
 
-              echo "Navigating to target directory on VM: $TARGET_DIR_ON_VM_REMOTE"
-              cd "$TARGET_DIR_ON_VM_REMOTE" || { echo "Failed to change directory to $TARGET_DIR_ON_VM_REMOTE"; exit 1; }
+            # Give it a moment to start and check status
+            sleep 5
+            sudo systemctl status "$SERVICE_NAME" --no-pager || { echo "Failed to get service status. Check VM logs manually."; exit 1; }
 
-              echo "Stopping existing Spring Boot service ($SERVICE_NAME_ON_VM_REMOTE)..."
-              # Use '|| true' or '|| echo' to prevent script from failing if service isn't running
-              sudo systemctl stop "$SERVICE_NAME_ON_VM_REMOTE" || echo "Service $SERVICE_NAME_ON_VM_REMOTE was not running or failed to stop, continuing..."
-
-              echo "Starting Spring Boot service ($SERVICE_NAME_ON_VM_REMOTE)..."
-              sudo systemctl start "$SERVICE_NAME_ON_VM_REMOTE"
-              echo "Service start command issued. Checking status..."
-
-              # Give it a moment to start and check status
-              sleep 5
-              sudo systemctl status "$SERVICE_NAME_ON_VM_REMOTE" --no-pager || { echo "Failed to get service status. Check VM logs manually."; exit 1; }
-
-              echo "Deployment complete on VM. Check application logs on VM for full status."
-              echo "You can check logs using: journalctl -u $SERVICE_NAME_ON_VM_REMOTE -f"
-            EOF
+            echo "Deployment complete on VM. Check application logs on VM for full status."
+            echo "You can check logs using: journalctl -u $SERVICE_NAME -f"
