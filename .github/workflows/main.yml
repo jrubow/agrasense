@@ -124,7 +124,7 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |
-            🚀 **Deployment Status Update** 🚀
+            🚀 **@devops Deployment Status Update** 🚀
             **Repository:** `${{ github.repository }}`
             **Branch:** `${{ github.ref_name }}`
             **Triggered by:** `${{ github.actor }}`
