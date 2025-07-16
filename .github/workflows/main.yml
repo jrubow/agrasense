@@ -131,3 +131,4 @@ jobs:
             **Commit Message:** `${{ github.event.head_commit.message }}`
             **Status:** `${{ needs.deploy-to-azure-vm.result == 'success' && '✅ SUCCESS' || '❌ FAILED' }}`
             **Workflow Run:** `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`
+            **Attention:** <@&1394825891430928515>
