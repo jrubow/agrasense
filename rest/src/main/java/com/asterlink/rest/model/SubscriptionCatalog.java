@@ -34,9 +34,6 @@ public class SubscriptionCatalog {
     @Column(name = "renewal_period_days", nullable = false)
     private int renewalPeriodDays;
 
-    @Column(name = "total_billing_cycles", nullable = false)
-    private int totalBillingCycles;
-
     // Default constructor
     public SubscriptionCatalog() {}
 
@@ -58,7 +55,4 @@ public class SubscriptionCatalog {
 
     public int getRenewalPeriodDays() { return renewalPeriodDays; }
     public void setRenewalPeriodDays(int renewalPeriodDays) { this.renewalPeriodDays = renewalPeriodDays; }
-
-    public int getTotalBillingCycles() { return totalBillingCycles; }
-    public void setTotalBillingCycles(int totalBillingCycles) { this.totalBillingCycles = totalBillingCycles; }
 }
