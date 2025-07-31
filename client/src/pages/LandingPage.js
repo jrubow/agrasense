@@ -25,8 +25,6 @@ export default function LandingPage() {
             Cut costs and farm smarter with real-time, affordable field insights.
           </p>
           <button className="landing-button" onClick={() => navigate("/register")}>Get Started Now!</button>
-          <button className="landing-button"
-           onClick={() => navigate("/newsroom")}> Newsroom </button>
         </div>
         <div className="landingpage-hero-image">
           <div className="landingpage-hero-image-img">
